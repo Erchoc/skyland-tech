@@ -2,8 +2,15 @@
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-[var(--border)] py-8 mt-20">
-  <div class="mx-auto max-w-7xl px-6 text-center text-sm text-[var(--text)]/60">
-    <p>&copy; {year} · Built with Astro</p>
+<footer class="mt-20 py-10" style={`border-top: 1px solid var(--border);`}>
+  <div class="mx-auto max-w-[1150px] px-6 lg:px-8">
+    <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+      <p class="text-[13px]" style="color: var(--text-helper);">
+        &copy; {year} · Built with Astro
+      </p>
+      <p class="text-[13px]" style="color: var(--text-helper);">
+        Designed for engineers
+      </p>
+    </div>
   </div>
 </footer>

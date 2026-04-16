@@ -8,13 +8,45 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<header class="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--bg)]/80 backdrop-blur-lg">
-  <nav class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-    <a href="/" class="text-xl font-bold tracking-tight">{title}</a>
-    <div class="flex items-center gap-6">
-      <a href="/" class="text-sm hover:text-primary transition-colors">首页</a>
-      <a href="/tags" class="text-sm hover:text-primary transition-colors hidden sm:block">标签</a>
+<header class="sticky top-0 z-50" style={`background-color: var(--bg); border-bottom: 1px solid var(--border);`}>
+  <nav class="mx-auto flex max-w-[1150px] items-center justify-between px-6 py-3 lg:px-8">
+    <a
+      href="/"
+      class="text-[1.19rem] font-bold tracking-tight"
+      style={`color: var(--text); font-family: var(--font-heading); font-feature-settings: "kern" 1;`}
+    >
+      {title}
+    </a>
+
+    <!-- Desktop -->
+    <div class="hidden items-center gap-8 sm:flex">
+      <a href="/" class="text-[15px] font-medium transition-colors" style="color: var(--text-secondary);">首页</a>
+      <a href="/tags" class="text-[15px] font-medium transition-colors" style="color: var(--text-secondary);">标签</a>
       <ThemeToggle client:load />
     </div>
+
+    <!-- Mobile -->
+    <div class="flex items-center gap-4 sm:hidden">
+      <ThemeToggle client:load />
+      <button id="mobile-menu-btn" aria-label="打开菜单" class="p-1" style="color: var(--text-secondary);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
   </nav>
+
+  <!-- Mobile dropdown -->
+  <div id="mobile-menu" class="hidden sm:hidden" style={`border-top: 1px solid var(--border); background-color: var(--bg);`}>
+    <div class="flex flex-col gap-1 px-6 py-3">
+      <a href="/" class="block py-2 text-[15px] font-medium" style="color: var(--text-secondary);">首页</a>
+      <a href="/tags" class="block py-2 text-[15px] font-medium" style="color: var(--text-secondary);">标签</a>
+    </div>
+  </div>
 </header>
+
+<script>
+  const btn = document.getElementById("mobile-menu-btn");
+  const menu = document.getElementById("mobile-menu");
+  btn?.addEventListener("click", () => menu?.classList.toggle("hidden"));
+</script>

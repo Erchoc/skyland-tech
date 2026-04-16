@@ -1,36 +1,225 @@
 @import "tailwindcss";
 
+@source "../components/**/*.{astro,tsx}";
+@source "../layouts/**/*.astro";
+@source "../pages/**/*.astro";
+
+/* ─── Design System: HashiCorp-inspired ─── */
+
 @theme {
-  --color-primary: #6366f1;
-  --color-primary-light: #818cf8;
-  --color-primary-dark: #4f46e5;
-  --font-sans: "Inter", "Noto Sans SC", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  /* Brand */
+  --color-brand: #000000;
+  --color-accent: #2264d6;
+  --color-accent-hover: #2b89ff;
+  --color-accent-dark: #1060ff;
+
+  /* Neutrals — light */
+  --color-surface-primary: #ffffff;
+  --color-surface-secondary: #f1f2f3;
+  --color-text-primary: #000000;
+  --color-text-secondary: #3b3d45;
+  --color-text-helper: #656a76;
+  --color-border: rgba(178, 182, 189, 0.4);
+  --color-border-strong: rgb(97, 104, 117);
+
+  /* Neutrals — dark */
+  --color-dark-bg: #15181e;
+  --color-dark-bg-deep: #0d0e12;
+  --color-dark-text: #efeff1;
+  --color-dark-text-secondary: #d5d7db;
+
+  /* Shadows — whisper level */
+  --shadow-whisper: rgba(97, 104, 117, 0.05) 0px 1px 1px, rgba(97, 104, 117, 0.05) 0px 2px 2px;
+
+  /* Typography */
+  --font-heading: "DM Sans", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+
+  /* Radius — tight, structural */
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 8px;
 }
 
 @layer base {
   :root {
-    --bg: #ffffff;
-    --text: #1a1a2e;
-    --surface: #f8f9fa;
-    --border: #e2e8f0;
+    --bg: var(--color-surface-primary);
+    --bg-secondary: var(--color-surface-secondary);
+    --text: var(--color-text-primary);
+    --text-secondary: var(--color-text-secondary);
+    --text-helper: var(--color-text-helper);
+    --border: var(--color-border);
+    --surface: var(--color-surface-secondary);
+    --link: var(--color-accent);
+    --link-hover: var(--color-accent-hover);
   }
 
   .dark {
-    --bg: #0f0f1a;
-    --text: #e2e8f0;
-    --surface: #1a1a2e;
-    --border: #2d2d44;
+    --bg: var(--color-dark-bg);
+    --bg-secondary: var(--color-dark-bg-deep);
+    --text: var(--color-dark-text);
+    --text-secondary: var(--color-dark-text-secondary);
+    --text-helper: var(--color-text-helper);
+    --border: rgba(97, 104, 117, 0.4);
+    --surface: #1c1f26;
+    --link: var(--color-accent-dark);
+    --link-hover: var(--color-accent-hover);
   }
 
   html {
     background-color: var(--bg);
     color: var(--text);
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    font-family: var(--font-sans);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.63;
     min-height: 100dvh;
+  }
+
+  /* Heading typography — tight, dense, load-bearing */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-feature-settings: "kern" 1;
+    font-weight: 700;
+  }
+
+  h1 { font-size: 3.25rem; line-height: 1.17; letter-spacing: -0.02em; }
+  h2 { font-size: 2.13rem; line-height: 1.19; }
+  h3 { font-size: 1.63rem; line-height: 1.19; }
+  h4 { font-size: 1.19rem; line-height: 1.21; }
+
+  a {
+    color: var(--link);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  a:hover {
+    color: var(--link-hover);
+  }
+
+  /* Focus rings — systematic, 3px solid */
+  :focus-visible {
+    outline: 3px solid var(--link);
+    outline-offset: 2px;
+  }
+
+  /* Code blocks */
+  pre {
+    background: var(--color-dark-bg-deep) !important;
+    border-radius: var(--radius-lg);
+    font-family: var(--font-mono);
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+  }
+
+  /* Selection */
+  ::selection {
+    background: rgba(34, 100, 214, 0.2);
+  }
+}
+
+/* Prose — article body styling */
+@layer components {
+  .article-prose {
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.69;
+    color: var(--text);
+  }
+
+  .article-prose h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    scroll-margin-top: 5rem;
+  }
+
+  .article-prose h3 {
+    font-size: 1.375rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    scroll-margin-top: 5rem;
+  }
+
+  .article-prose p {
+    margin-bottom: 1.25rem;
+  }
+
+  .article-prose a {
+    color: var(--link);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.15s ease;
+  }
+  .article-prose a:hover {
+    text-decoration-color: var(--link-hover);
+  }
+
+  .article-prose img {
+    border-radius: var(--radius-lg);
+    margin: 2rem 0;
+  }
+
+  .article-prose pre {
+    margin: 1.5rem 0;
+    padding: 1.25rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .article-prose code:not(pre code) {
+    background: var(--bg-secondary);
+    padding: 0.15em 0.4em;
+    border-radius: var(--radius-sm);
+    font-size: 0.875em;
+  }
+
+  .article-prose blockquote {
+    border-left: 3px solid var(--border);
+    padding-left: 1rem;
+    color: var(--text-secondary);
+    margin: 1.5rem 0;
+    font-style: italic;
+  }
+
+  .article-prose ul, .article-prose ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .article-prose li {
+    margin-bottom: 0.5rem;
+  }
+
+  .article-prose hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+  }
+}
+
+/* Uppercase label — wayfinding pattern */
+@layer utilities {
+  .label-uppercase {
+    font-family: var(--font-heading);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.69;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
   }
 }

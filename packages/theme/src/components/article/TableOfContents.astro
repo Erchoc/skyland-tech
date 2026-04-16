@@ -10,14 +10,15 @@ const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 ---
 
 {toc.length > 0 && (
-  <nav class="text-sm">
-    <h3 class="mb-3 font-semibold text-[var(--text)]/40 text-xs uppercase tracking-widest">目录</h3>
-    <ul class="space-y-2 border-l border-[var(--border)]">
+  <nav>
+    <p class="label-uppercase mb-4" style="color: var(--text-helper);">目录</p>
+    <ul style="border-left: 1px solid var(--border);">
       {toc.map((heading) => (
-        <li style={`padding-left: ${(heading.depth - 2) * 12 + 12}px`}>
+        <li style={`padding-left: ${(heading.depth - 2) * 12 + 12}px;`}>
           <a
             href={`#${heading.slug}`}
-            class="block text-[var(--text)]/50 hover:text-primary transition-colors leading-snug py-0.5"
+            class="block py-1 text-[13px] leading-snug transition-colors"
+            style="color: var(--text-helper);"
           >
             {heading.text}
           </a>

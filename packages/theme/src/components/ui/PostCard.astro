@@ -24,40 +24,70 @@ const formattedDate = date.toLocaleDateString("zh-CN", {
 <a
   href={`/posts/${slug}`}
   class:list={[
-    "group block overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] transition-all hover:shadow-xl hover:-translate-y-1",
-    featured && "sm:col-span-2 sm:grid sm:grid-cols-2",
+    "group block overflow-hidden transition-shadow duration-200",
+    featured && "sm:col-span-2 lg:col-span-3 sm:grid sm:grid-cols-2 sm:gap-0",
   ]}
+  style={`
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-whisper);
+  `}
 >
   {cover && (
-    <div class="aspect-video overflow-hidden">
+    <div class:list={["overflow-hidden", featured ? "aspect-[16/10] sm:aspect-auto" : "aspect-video"]}>
       <img
         src={cover.src}
         width={cover.width}
         height={cover.height}
         alt={title}
-        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         loading="lazy"
       />
     </div>
   )}
-  <div class="p-6">
-    <div class="flex items-center gap-3 text-xs text-[var(--text)]/50">
+
+  <div class:list={["p-5 sm:p-6", featured && "flex flex-col justify-center"]}>
+    {/* Uppercase label */}
+    <div class="label-uppercase" style="color: var(--text-helper);">
       <time datetime={date.toISOString()}>{formattedDate}</time>
-      <span>·</span>
+      <span class="mx-2">·</span>
       <span>{readingTime}</span>
     </div>
-    <h2 class:list={[
-      "mt-3 font-bold leading-tight tracking-tight",
-      featured ? "text-2xl sm:text-3xl" : "text-xl",
-    ]}>
+
+    {/* Title — HashiCorp style: tight, heavy */}
+    <h2
+      class:list={["mt-3 tracking-tight", featured ? "text-[1.625rem] sm:text-[2.125rem]" : "text-[1.19rem]"]}
+      style={`
+        font-family: var(--font-heading);
+        font-feature-settings: "kern" 1;
+        font-weight: 700;
+        line-height: 1.19;
+        color: var(--text);
+      `}
+    >
       {title}
     </h2>
-    <p class="mt-2 line-clamp-2 text-sm text-[var(--text)]/60 leading-relaxed">
+
+    <p
+      class:list={["mt-2 line-clamp-2", featured ? "text-[1rem]" : "text-[0.875rem]"]}
+      style={`line-height: 1.63; color: var(--text-secondary);`}
+    >
       {description}
     </p>
+
+    {/* Tags — tight radius badges */}
     <div class="mt-4 flex flex-wrap gap-2">
       {tags.map((tag) => (
-        <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+        <span
+          class="text-[13px] font-medium"
+          style={`
+            padding: 3px 8px;
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            color: var(--text-helper);
+          `}
+        >
           {tag}
         </span>
       ))}

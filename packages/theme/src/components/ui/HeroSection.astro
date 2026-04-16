@@ -7,17 +7,37 @@ interface Props {
 const { title, description } = Astro.props;
 ---
 
-<section class="relative overflow-hidden py-24 sm:py-32 lg:py-40">
-  <div class="absolute inset-0 -z-10">
-    <div class="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-primary-dark/10 dark:from-primary/10 dark:to-primary-dark/5" />
-    <div class="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
-    <div class="absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-primary-light/10 blur-3xl" />
-  </div>
-  <div class="mx-auto max-w-4xl px-6 text-center">
-    <h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-7xl">
+<section class="relative overflow-hidden" style="background-color: var(--color-dark-bg);">
+  <!-- Subtle gradient atmosphere -->
+  <div class="absolute inset-0 opacity-40" style="background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(34, 100, 214, 0.15), transparent);"></div>
+
+  <div class="relative mx-auto max-w-[1150px] px-6 py-20 sm:py-28 lg:px-8 lg:py-36">
+    <p class="label-uppercase" style="color: var(--color-text-helper);">技术 · 架构 · 工程</p>
+
+    <h1
+      class="mt-4 max-w-3xl tracking-tight"
+      style={`
+        font-family: var(--font-heading);
+        font-feature-settings: "kern" 1;
+        font-weight: 600;
+        font-size: clamp(2.625rem, 5vw + 1rem, 5.125rem);
+        line-height: 1.17;
+        color: var(--color-dark-text);
+      `}
+    >
       {title}
     </h1>
-    <p class="mt-6 text-lg text-[var(--text)]/70 sm:text-xl leading-relaxed">
+
+    <p
+      class="mt-6 max-w-xl"
+      style={`
+        font-family: var(--font-body);
+        font-size: 1.25rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: var(--color-dark-text-secondary);
+      `}
+    >
       {description}
     </p>
   </div>
