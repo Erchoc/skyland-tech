@@ -1,0 +1,5 @@
+{
+  "buildCommand": "pnpm build",
+  "outputDirectory": "playground/dist",
+  "installCommand": "pnpm install"
+}

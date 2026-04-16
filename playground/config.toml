@@ -1,0 +1,23 @@
+[site]
+title = "空岛云技术"
+description = "纯技术 + 架构设计文章合集"
+author = "龙野"
+url = "https://example.com"
+lang = "zh-CN"
+
+[theme]
+color = "#6366f1"
+dark = true
+layout = "magazine"
+
+[social]
+github = "https://github.com/example"
+
+[categories]
+list = ["架构设计", "工程实践", "性能优化", "基础设施"]
+
+[features]
+pwa = true
+slides = true
+search = true
+rss = true
