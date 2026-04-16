@@ -1,0 +1,27 @@
+{
+  "name": "@pkg/theme",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    "./styles/*": "./src/styles/*",
+    "./layouts/*": "./src/layouts/*",
+    "./components/*": "./src/components/*",
+    "./pages/*": "./src/pages/*",
+    "./content-config": "./src/content.config.ts"
+  },
+  "peerDependencies": {
+    "astro": "^5.0.0"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.0.0",
+    "@astrojs/react": "^4.0.0",
+    "@astrojs/sitemap": "^3.2.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "tailwindcss": "^4.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "medium-zoom": "^1.1.0",
+    "reading-time": "^1.5.0",
+    "mermaid": "^11.0.0"
+  }
+}

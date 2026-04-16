@@ -1,0 +1,22 @@
+{
+  "name": "@pkg/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "pkg": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "dev": "tsup src/index.ts --format esm --watch"
+  },
+  "dependencies": {
+    "citty": "^0.1.6",
+    "consola": "^3.4.0",
+    "smol-toml": "^1.3.0",
+    "giget": "^2.0.0",
+    "execa": "^9.5.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0"
+  }
+}
