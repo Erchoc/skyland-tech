@@ -1,0 +1,59 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/layout/Header.astro";
+import Footer from "../components/layout/Footer.astro";
+import HeroSection from "../components/ui/HeroSection.astro";
+import PostCard from "../components/ui/PostCard.astro";
+import { getReadingTime } from "../utils/reading-time.ts";
+
+const posts = (await getCollection("posts", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const [featured, ...rest] = posts;
+---
+
+<BaseLayout title="空岛云技术" description="纯技术 + 架构设计文章合集">
+  <Header title="空岛云技术" />
+  <main>
+    <HeroSection title="空岛云技术" description="纯技术 + 架构设计文章合集" />
+
+    <section class="mx-auto max-w-7xl px-6 pb-20">
+      {featured && (
+        <div class="mb-12">
+          <h2 class="mb-6 text-sm font-semibold uppercase tracking-widest text-[var(--text)]/40">精选文章</h2>
+          <PostCard
+            title={featured.data.title}
+            description={featured.data.description}
+            date={featured.data.date}
+            tags={featured.data.tags}
+            cover={featured.data.cover}
+            slug={featured.id}
+            readingTime={getReadingTime(featured.body ?? "")}
+            featured
+          />
+        </div>
+      )}
+
+      {rest.length > 0 && (
+        <div>
+          <h2 class="mb-6 text-sm font-semibold uppercase tracking-widest text-[var(--text)]/40">所有文章</h2>
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {rest.map((post) => (
+              <PostCard
+                title={post.data.title}
+                description={post.data.description}
+                date={post.data.date}
+                tags={post.data.tags}
+                cover={post.data.cover}
+                slug={post.id}
+                readingTime={getReadingTime(post.body ?? "")}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

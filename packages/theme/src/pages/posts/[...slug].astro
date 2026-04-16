@@ -1,0 +1,40 @@
+---
+import { getCollection, render } from "astro:content";
+import ArticleLayout from "../../layouts/ArticleLayout.astro";
+import { getReadingTime } from "../../utils/reading-time.ts";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts", ({ data }) => !data.draft);
+  const sorted = posts.sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+
+  return sorted.map((post, i) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      prevPost: sorted[i - 1] ? { slug: sorted[i - 1].id, title: sorted[i - 1].data.title } : null,
+      nextPost: sorted[i + 1] ? { slug: sorted[i + 1].id, title: sorted[i + 1].data.title } : null,
+    },
+  }));
+}
+
+const { post, prevPost, nextPost } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<ArticleLayout
+  title={post.data.title}
+  subtitle={post.data.subtitle}
+  description={post.data.description}
+  date={post.data.date}
+  updatedDate={post.data.updatedDate}
+  author={post.data.author}
+  cover={post.data.cover}
+  tags={post.data.tags}
+  readingTime={getReadingTime(post.body ?? "")}
+  headings={headings}
+  series={post.data.series}
+  prevPost={prevPost}
+  nextPost={nextPost}
+>
+  <Content />
+</ArticleLayout>
