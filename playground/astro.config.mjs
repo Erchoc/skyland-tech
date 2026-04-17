@@ -13,8 +13,6 @@ const ONE_YEAR = 60 * 60 * 24 * 365;
 
 export default defineConfig({
   site: "https://skyland-tech.longye.site",
-  // 产物输出到仓库根 /dist，匹配 Vercel 默认 Output Directory，免去 Dashboard override
-  outDir: "../dist",
   integrations: [
     mdx(),
     react(),

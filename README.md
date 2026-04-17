@@ -85,8 +85,9 @@ description: "SEO 描述"
 
 ```json
 {
+  "framework": null,
   "buildCommand": "pnpm --filter playground build",
-  "outputDirectory": "dist",
+  "outputDirectory": "playground/dist",
   "installCommand": "pnpm install"
 }
 ```
