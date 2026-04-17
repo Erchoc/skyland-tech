@@ -86,11 +86,14 @@ description: "SEO 描述"
 ```json
 {
   "framework": null,
-  "buildCommand": "pnpm --filter playground build",
-  "outputDirectory": "playground/dist",
+  "buildCommand": "pnpm --filter playground build && rm -rf dist && mv playground/dist dist",
+  "outputDirectory": "dist",
   "installCommand": "pnpm install"
 }
 ```
+
+> `mv` 是兼容 Vercel Dashboard 固化的 `Output Directory=dist` 而做的迁就：
+> Astro 先按默认写到 `playground/dist`（PWA 插件依赖该路径），再 rename 到根 `dist/`。
 
 首次部署后建议：
 
