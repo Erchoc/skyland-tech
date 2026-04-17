@@ -1,6 +1,6 @@
 {
   "framework": null,
-  "buildCommand": "pnpm --filter playground build && rm -rf dist && mv playground/dist dist",
+  "buildCommand": "pnpm --filter playground build && if [ -d ./playground/dist ]; then rm -rf ./dist && mv ./playground/dist ./dist; fi",
   "outputDirectory": "dist",
   "installCommand": "pnpm install"
 }

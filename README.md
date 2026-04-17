@@ -86,14 +86,16 @@ description: "SEO 描述"
 ```json
 {
   "framework": null,
-  "buildCommand": "pnpm --filter playground build && rm -rf dist && mv playground/dist dist",
+  "buildCommand": "pnpm --filter playground build && if [ -d ./playground/dist ]; then rm -rf ./dist && mv ./playground/dist ./dist; fi",
   "outputDirectory": "dist",
   "installCommand": "pnpm install"
 }
 ```
 
-> `mv` 是兼容 Vercel Dashboard 固化的 `Output Directory=dist` 而做的迁就：
-> Astro 先按默认写到 `playground/dist`（PWA 插件依赖该路径），再 rename 到根 `dist/`。
+> buildCommand 做到 CWD-agnostic：若 Vercel Root Directory 是仓库根，
+> astro 产物在 `./playground/dist` → mv 搬到 `./dist`；若 Root Directory
+> 是 `playground`，astro 产物直接就是 `./dist`，if 条件不成立跳过 mv。
+> 两种情况下 outputDirectory=`dist` 都能 match 上。
 
 首次部署后建议：
 
