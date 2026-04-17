@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/layout/Header.astro";
 import Footer from "../../components/layout/Footer.astro";
+import { tagToSlug } from "../../utils/tag-slug.ts";
 
 const posts = await getCollection("posts", ({ data }) => !data.draft);
 const tagCounts = new Map<string, number>();
@@ -34,7 +35,7 @@ const totalPosts = posts.length;
     <div class="mt-10 flex flex-wrap justify-center gap-3">
       {tags.map(([tag, count]) => (
         <a
-          href={`/tags/${tag}`}
+          href={`/tags/${tagToSlug(tag)}`}
           class="tag-pill text-[15px] font-medium transition-all duration-150"
           style={`
             padding: 10px 16px;

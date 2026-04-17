@@ -5,13 +5,14 @@ import Header from "../../components/layout/Header.astro";
 import Footer from "../../components/layout/Footer.astro";
 import PostCard from "../../components/ui/PostCard.astro";
 import { getReadingTime } from "../../utils/reading-time.ts";
+import { tagToSlug } from "../../utils/tag-slug.ts";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts", ({ data }) => !data.draft);
   const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
 
   return tags.map((tag) => ({
-    params: { tag },
+    params: { tag: tagToSlug(tag) },
     props: {
       tag,
       posts: posts

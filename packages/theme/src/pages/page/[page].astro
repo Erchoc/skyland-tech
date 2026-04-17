@@ -56,12 +56,13 @@ if (mockPage) {
 const [, ...rest] = allPosts;
 const totalPages = Math.max(1, Math.ceil(rest.length / POSTS_PER_PAGE));
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
   const mockPage = import.meta.env.MOCK_POSTS === "1";
-  const totalPosts = mockPage ? 100 : 4; // approximate
-  const perPage = 12;
-  const total = Math.ceil(Math.max(0, totalPosts - 1) / perPage);
-  return Array.from({ length: Math.max(0, total - 1) }, (_, i) => ({
+  const real = await getCollection("posts", ({ data }) => !data.draft);
+  const totalPosts = mockPage ? 100 : real.length;
+  // featured 占第 1 篇；第 1 页放在 "/"，这里只生成第 2 页及以后
+  const totalPages = Math.max(1, Math.ceil(Math.max(0, totalPosts - 1) / 12));
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
     params: { page: String(i + 2) },
   }));
 }

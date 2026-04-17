@@ -3,6 +3,7 @@ import BaseLayout from "./BaseLayout.astro";
 import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
 import TableOfContents from "../components/article/TableOfContents.astro";
+import { tagToSlug } from "../utils/tag-slug.ts";
 import type { MarkdownHeading, ImageMetadata } from "astro";
 
 interface Props {
@@ -90,7 +91,7 @@ const formattedUpdated = updatedDate?.toLocaleDateString("zh-CN", {
         <div class="mt-4 flex flex-wrap gap-2">
           {tags.map((tag) => (
             <a
-              href={`/tags/${tag}`}
+              href={`/tags/${tagToSlug(tag)}`}
               class="text-[13px] font-medium transition-colors"
               style={`
                 padding: 3px 8px;
