@@ -6,6 +6,7 @@ import Footer from "../components/layout/Footer.astro";
 import HeroSection from "../components/ui/HeroSection.astro";
 import PostCard from "../components/ui/PostCard.astro";
 import { getReadingTime } from "../utils/reading-time.ts";
+import { buildPaginationItems, pageUrl } from "../utils/pagination.ts";
 
 const POSTS_PER_PAGE = 12;
 const mockPage = import.meta.env.MOCK_POSTS === "1";
@@ -55,30 +56,9 @@ if (mockPage) {
 }
 
 const [featured, ...rest] = allPosts;
-
-// SSG: render page 1 only on index, other pages at /page/2, /page/3...
 const page1Posts = rest.slice(0, POSTS_PER_PAGE);
 const totalPages = Math.max(1, Math.ceil(rest.length / POSTS_PER_PAGE));
-
-function pageUrl(page: number) {
-  return page <= 1 ? "/" : `/page/${page}`;
-}
-
-// Pre-compute pagination items
-const paginationItems: { type: "page" | "ellipsis"; value: number; active: boolean; href: string }[] = [];
-if (totalPages > 1) {
-  if (totalPages <= 7) {
-    for (let i = 1; i <= totalPages; i++) {
-      paginationItems.push({ type: "page", value: i, active: i === 1, href: pageUrl(i) });
-    }
-  } else {
-    paginationItems.push({ type: "page", value: 1, active: true, href: pageUrl(1) });
-    paginationItems.push({ type: "page", value: 2, active: false, href: pageUrl(2) });
-    paginationItems.push({ type: "page", value: 3, active: false, href: pageUrl(3) });
-    paginationItems.push({ type: "ellipsis", value: 0, active: false, href: "" });
-    paginationItems.push({ type: "page", value: totalPages, active: false, href: pageUrl(totalPages) });
-  }
-}
+const paginationItems = buildPaginationItems(1, totalPages);
 ---
 
 <BaseLayout title="空岛云技术" description="纯技术 + 架构设计文章合集">
@@ -127,7 +107,6 @@ if (totalPages > 1) {
         </div>
       )}
 
-      {/* ── Pagination ── */}
       {totalPages > 1 && (
         <nav class="mt-12 flex items-center justify-center gap-2" aria-label="分页">
           <span class="pagination-btn disabled" aria-hidden="true">
@@ -144,84 +123,12 @@ if (totalPages > 1) {
             )
           )}
 
-          {totalPages > 1 && (
-            <a href={pageUrl(2)} class="pagination-btn" aria-label="下一页">
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-            </a>
-          )}
+          <a href={pageUrl(2)} class="pagination-btn" aria-label="下一页">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
         </nav>
       )}
     </section>
   </main>
   <Footer />
 </BaseLayout>
-
-<style>
-  .pagination-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 44px;
-    height: 44px;
-    padding: 0 12px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text-secondary);
-    font-family: var(--font-heading);
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease, transform 0.08s ease;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-  }
-
-  /* 触屏：按下瞬间直接反转成蓝底白字 + 蓝色光晕，对比度最大化 */
-  .pagination-btn:active:not(.disabled):not(.active) {
-    background: var(--link);
-    border-color: var(--link);
-    color: #fff;
-    transform: scale(0.9);
-    box-shadow: 0 4px 16px rgba(34, 100, 214, 0.4);
-  }
-
-  /* 鼠标设备：hover 高亮，不影响触屏 */
-  @media (hover: hover) {
-    .pagination-btn:hover:not(.disabled):not(.active) {
-      border-color: var(--link);
-      color: var(--link);
-      box-shadow: 0 0 0 1px var(--link);
-    }
-  }
-
-  .pagination-btn:focus-visible {
-    outline: 2px solid var(--link);
-    outline-offset: 2px;
-  }
-
-  .pagination-btn.active {
-    background: var(--link);
-    border-color: var(--link);
-    color: #fff;
-    cursor: default;
-  }
-
-  .pagination-btn.disabled {
-    opacity: 0.3;
-    cursor: default;
-    pointer-events: none;
-  }
-
-  .pagination-ellipsis {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 28px;
-    height: 44px;
-    color: var(--text-helper);
-    font-size: 14px;
-    letter-spacing: 2px;
-  }
-</style>

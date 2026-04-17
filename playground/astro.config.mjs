@@ -6,6 +6,11 @@ import AstroPWA from "@vite-pwa/astro";
 import tailwindcss from "@tailwindcss/vite";
 import { injectThemePages } from "@pkg/theme/integrations/inject-pages";
 
+const ACCENT = "#2264d6";
+const DARK_BG = "#15181e";
+const ONE_WEEK = 60 * 60 * 24 * 7;
+const ONE_YEAR = 60 * 60 * 24 * 365;
+
 export default defineConfig({
   site: "https://example.com",
   integrations: [
@@ -13,16 +18,14 @@ export default defineConfig({
     react(),
     sitemap(),
     AstroPWA({
-      // autoUpdate：新 SW 就绪后自动 skipWaiting + claim，下次 navigation 无感生效
       registerType: "autoUpdate",
       manifest: {
         name: "技术分享",
-        short_name: "技术分享",
         description: "纯技术 + 架构设计文章合集",
         start_url: "/",
         display: "standalone",
-        theme_color: "#2264d6",
-        background_color: "#15181e",
+        theme_color: ACCENT,
+        background_color: DARK_BG,
         icons: [
           {
             src: "/favicon.svg",
@@ -44,44 +47,37 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // precache 只保留小静态资源：HTML 和字体都走 runtime
-        // - HTML 踢出：98 个文章页过多，且 HTML 走 precache 会被 SW 冷启动阻塞 → 白屏
-        // - 字体踢出：5.2MB 进 precache 会拖慢 SW install → 首次装 PWA 长时间 pending
         globPatterns: ["**/*.{css,js,svg,png,jpg,jpeg,gif,webp}"],
-        // navigation preload：让 HTML 请求和 SW 启动并行，消除 SW 冷启动间隙的白屏
+        // HTML 和字体走 runtime caching（不 precache）：避免 SW install 阻塞 → 白屏
         navigationPreload: true,
-        // 离线/SW 未就绪时所有 navigation 兜底到首页，避免浏览器 hang 住
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/\/_astro\//, /\/[^/?]+\.[^/]+$/],
         runtimeCaching: [
-          // HTML / 页面导航：NetworkFirst + 3s 超时，网络挂了回退 cache
           {
             urlPattern: ({ request }) => request.mode === "navigate",
             handler: "NetworkFirst",
             options: {
               cacheName: "pages",
               networkTimeoutSeconds: 3,
-              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              expiration: { maxEntries: 120, maxAgeSeconds: ONE_WEEK },
               cacheableResponse: { statuses: [0, 200] },
             },
           },
-          // 本地字体：CacheFirst，一次加载永久命中
           {
             urlPattern: /\.(?:woff2?|ttf)$/,
             handler: "CacheFirst",
             options: {
               cacheName: "fonts-local",
-              expiration: { maxEntries: 5, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              expiration: { maxEntries: 5, maxAgeSeconds: ONE_YEAR },
               cacheableResponse: { statuses: [0, 200] },
             },
           },
-          // Google Fonts（DM Sans / JetBrains Mono 走 CDN）
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: "CacheFirst",
             options: {
               cacheName: "google-fonts-cache",
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              expiration: { maxEntries: 10, maxAgeSeconds: ONE_YEAR },
               cacheableResponse: { statuses: [0, 200] },
             },
           },
@@ -90,7 +86,7 @@ export default defineConfig({
             handler: "CacheFirst",
             options: {
               cacheName: "gstatic-fonts-cache",
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              expiration: { maxEntries: 10, maxAgeSeconds: ONE_YEAR },
               cacheableResponse: { statuses: [0, 200] },
             },
           },
