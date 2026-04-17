@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import lxgwWenKaiFontUrl from "../styles/fonts/LXGWWenKaiLite-Regular.woff2?url";
 
 interface Props {
   title: string;
@@ -19,6 +20,8 @@ const { title, description = "", darkHero = false } = Astro.props;
     <meta name="theme-color" content="#15181e" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    {/* 霞鹜文楷提前并行下载，配合 font-display: swap 压缩 FOUT 抖动窗口；crossorigin 必填以复用 @font-face 的匿名请求 */}
+    <link rel="preload" href={lxgwWenKaiFontUrl} as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
