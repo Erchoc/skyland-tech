@@ -96,8 +96,8 @@ export default function SlideViewer({ content, title }: Props) {
         style={{
           flex: 1,
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
           padding: "clamp(24px, 5vw, 80px)",
           overflow: "auto",
         }}
@@ -108,6 +108,7 @@ export default function SlideViewer({ content, title }: Props) {
           style={{
             maxWidth: "900px",
             width: "100%",
+            margin: "auto 0",
             color: "#efeff1",
             animation: "slideIn 0.3s ease",
           }}

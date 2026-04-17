@@ -51,8 +51,8 @@ const { Content } = await render(post);
         function render() {
           app.innerHTML = `
             <div style="position:fixed;inset:0;z-index:9999;background:#15181e;color:#efeff1;font-family:system-ui,-apple-system,sans-serif;display:flex;flex-direction:column;">
-              <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(24px,5vw,80px);overflow:auto;">
-                <div style="max-width:900px;width:100%;animation:slideIn 0.3s ease;">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:clamp(24px,5vw,80px);overflow:auto;">
+                <div style="max-width:900px;width:100%;margin:auto 0;animation:slideIn 0.3s ease;">
                   ${slides[current]}
                 </div>
               </div>

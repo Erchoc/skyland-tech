@@ -1,0 +1,112 @@
+---
+export const prerender = true;
+import BaseLayout from "@pkg/theme/layouts/BaseLayout.astro";
+import Header from "@pkg/theme/components/layout/Header.astro";
+import Footer from "@pkg/theme/components/layout/Footer.astro";
+---
+
+<BaseLayout title="404 — 空岛云技术" description="页面未找到">
+  <Header title="空岛云技术" />
+  <main class="flex flex-1 items-center justify-center px-6" style="min-height: calc(100dvh - 200px);">
+    <div class="flex flex-col items-center text-center">
+      {/* ── Giant 404 with grid overlay effect ── */}
+      <div class="relative select-none" aria-hidden="true">
+        <span
+          class="block font-bold leading-none"
+          style={`
+            font-family: var(--font-heading);
+            font-feature-settings: "kern" 1;
+            font-size: clamp(8rem, 25vw, 16rem);
+            letter-spacing: -0.04em;
+            color: transparent;
+            -webkit-text-stroke: 1.5px var(--border);
+            animation: glitch-in 0.8s ease-out both;
+          `}
+        >
+          404
+        </span>
+        {/* Accent bar — structural, HashiCorp-style */}
+        <div
+          class="absolute left-1/2 -translate-x-1/2"
+          style={`
+            bottom: 22%;
+            width: 60%;
+            height: 3px;
+            background: var(--link);
+            opacity: 0.7;
+            animation: bar-slide 0.6s 0.3s ease-out both;
+          `}
+        />
+      </div>
+
+      {/* ── Label ── */}
+      <p class="label-uppercase mt-6" style="color: var(--text-helper);">
+        Page not found
+      </p>
+
+      {/* ── Description ── */}
+      <p class="mt-3 max-w-md text-[1.0625rem] leading-relaxed" style="color: var(--text-secondary);">
+        你访问的页面已迁移、删除，或从未存在过。<br />
+        检查 URL 是否正确，或返回首页重新探索。
+      </p>
+
+      {/* ── CTA button — HashiCorp dark style ── */}
+      <a
+        href="/"
+        class="mt-8 inline-flex items-center gap-2 text-[15px] font-medium transition-all duration-200 home-btn"
+        style={`
+          padding: 9px 15px 9px 18px;
+          border-radius: var(--radius-md);
+          background: var(--surface);
+          color: var(--text);
+          border: 1px solid var(--border);
+          box-shadow: var(--shadow-whisper);
+        `}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        返回首页
+      </a>
+
+      {/* ── Quick links ── */}
+      <div class="mt-10 flex flex-wrap justify-center gap-6">
+        <a href="/tags" class="text-[13px] font-medium transition-colors" style="color: var(--text-helper);">浏览标签</a>
+        <span style="color: var(--border);">·</span>
+        <a href="/rss.xml" class="text-[13px] font-medium transition-colors" style="color: var(--text-helper);">RSS 订阅</a>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  @keyframes glitch-in {
+    0% {
+      opacity: 0;
+      transform: translateY(20px) scaleY(0.8);
+      filter: blur(8px);
+    }
+    60% {
+      opacity: 1;
+      filter: blur(0);
+    }
+    100% {
+      transform: translateY(0) scaleY(1);
+    }
+  }
+
+  @keyframes bar-slide {
+    from {
+      transform: translateX(-50%) scaleX(0);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(-50%) scaleX(1);
+      opacity: 0.7;
+    }
+  }
+
+  .home-btn:hover {
+    border-color: var(--link) !important;
+    box-shadow: 0 0 0 1px var(--link);
+  }
+</style>

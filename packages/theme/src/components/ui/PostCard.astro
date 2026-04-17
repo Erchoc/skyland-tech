@@ -57,13 +57,17 @@ const formattedDate = date.toLocaleDateString("zh-CN", {
 
     {/* Title — HashiCorp style: tight, heavy */}
     <h2
-      class:list={["mt-3 tracking-tight", featured ? "text-[1.625rem] sm:text-[2.125rem]" : "text-[1.19rem]"]}
+      class:list={[
+        "mt-3 tracking-tight",
+        featured ? "text-[1.625rem] sm:text-[2.125rem]" : "text-[1.19rem] line-clamp-2",
+      ]}
       style={`
         font-family: var(--font-heading);
         font-feature-settings: "kern" 1;
         font-weight: 700;
         line-height: 1.19;
         color: var(--text);
+        ${!featured ? "min-height: 2.38em;" : ""}
       `}
     >
       {title}

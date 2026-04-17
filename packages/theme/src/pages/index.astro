@@ -7,10 +7,78 @@ import HeroSection from "../components/ui/HeroSection.astro";
 import PostCard from "../components/ui/PostCard.astro";
 import { getReadingTime } from "../utils/reading-time.ts";
 
-const posts = (await getCollection("posts", ({ data }) => !data.draft))
+const POSTS_PER_PAGE = 12;
+const mockPage = import.meta.env.MOCK_POSTS === "1";
+
+const realPosts = (await getCollection("posts", ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const [featured, ...rest] = posts;
+type SimplePost = {
+  id: string;
+  data: {
+    title: string;
+    description: string;
+    date: Date;
+    tags: string[];
+    cover?: any;
+    draft: boolean;
+  };
+  body?: string;
+};
+
+let allPosts: SimplePost[] = realPosts.map((p) => ({
+  id: p.id,
+  data: { title: p.data.title, description: p.data.description, date: p.data.date, tags: p.data.tags, cover: p.data.cover, draft: false },
+  body: p.body,
+}));
+
+if (mockPage) {
+  const tags = ["Kubernetes", "Docker", "Node.js", "性能优化", "架构设计", "云原生", "微服务", "CI/CD", "监控", "安全"];
+  const categories = ["架构设计", "工程实践", "性能优化", "基础设施"];
+  allPosts = Array.from({ length: 100 }, (_, i) => {
+    const base = realPosts[i % realPosts.length];
+    const d = new Date(2026, 0, 1);
+    d.setDate(d.getDate() + i);
+    return {
+      id: `mock-post-${i + 1}`,
+      data: {
+        title: `${categories[i % categories.length]}实践 #${i + 1}：${base.data.title}`,
+        description: base.data.description,
+        date: d,
+        tags: [tags[i % tags.length], tags[(i + 3) % tags.length]],
+        cover: base.data.cover,
+        draft: false,
+      },
+      body: base.body,
+    };
+  }).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+}
+
+const [featured, ...rest] = allPosts;
+
+// SSG: render page 1 only on index, other pages at /page/2, /page/3...
+const page1Posts = rest.slice(0, POSTS_PER_PAGE);
+const totalPages = Math.max(1, Math.ceil(rest.length / POSTS_PER_PAGE));
+
+function pageUrl(page: number) {
+  return page <= 1 ? "/" : `/page/${page}`;
+}
+
+// Pre-compute pagination items
+const paginationItems: { type: "page" | "ellipsis"; value: number; active: boolean; href: string }[] = [];
+if (totalPages > 1) {
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) {
+      paginationItems.push({ type: "page", value: i, active: i === 1, href: pageUrl(i) });
+    }
+  } else {
+    paginationItems.push({ type: "page", value: 1, active: true, href: pageUrl(1) });
+    paginationItems.push({ type: "page", value: 2, active: false, href: pageUrl(2) });
+    paginationItems.push({ type: "page", value: 3, active: false, href: pageUrl(3) });
+    paginationItems.push({ type: "ellipsis", value: 0, active: false, href: "" });
+    paginationItems.push({ type: "page", value: totalPages, active: false, href: pageUrl(totalPages) });
+  }
+}
 ---
 
 <BaseLayout title="空岛云技术" description="纯技术 + 架构设计文章合集">
@@ -35,11 +103,16 @@ const [featured, ...rest] = posts;
         </div>
       )}
 
-      {rest.length > 0 && (
+      {page1Posts.length > 0 && (
         <div>
-          <p class="label-uppercase mb-6" style="color: var(--text-helper);">所有文章</p>
+          <div class="mb-6 flex items-baseline justify-between">
+            <p class="label-uppercase" style="color: var(--text-helper);">所有文章</p>
+            <p class="text-[13px]" style="color: var(--text-helper);">
+              共 {rest.length + 1} 篇
+            </p>
+          </div>
           <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {rest.map((post) => (
+            {page1Posts.map((post) => (
               <PostCard
                 title={post.data.title}
                 description={post.data.description}
@@ -53,7 +126,82 @@ const [featured, ...rest] = posts;
           </div>
         </div>
       )}
+
+      {/* ── Pagination ── */}
+      {totalPages > 1 && (
+        <nav class="mt-12 flex items-center justify-center gap-2" aria-label="分页">
+          <span class="pagination-btn disabled" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </span>
+
+          {paginationItems.map((item) =>
+            item.type === "ellipsis" ? (
+              <span class="pagination-ellipsis">···</span>
+            ) : item.active ? (
+              <span class="pagination-btn active" aria-current="page">{item.value}</span>
+            ) : (
+              <a href={item.href} class="pagination-btn">{item.value}</a>
+            )
+          )}
+
+          {totalPages > 1 && (
+            <a href={pageUrl(2)} class="pagination-btn" aria-label="下一页">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+          )}
+        </nav>
+      )}
     </section>
   </main>
   <Footer />
 </BaseLayout>
+
+<style>
+  .pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+
+  .pagination-btn:hover:not(.disabled):not(.active) {
+    border-color: var(--link);
+    color: var(--link);
+    box-shadow: 0 0 0 1px var(--link);
+  }
+
+  .pagination-btn.active {
+    background: var(--link);
+    border-color: var(--link);
+    color: #fff;
+    cursor: default;
+  }
+
+  .pagination-btn.disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  .pagination-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 36px;
+    color: var(--text-helper);
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+</style>

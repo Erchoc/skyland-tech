@@ -10,6 +10,7 @@ export function injectThemePages(): AstroIntegration {
         injectRoute({ pattern: "/tags", entrypoint: "@pkg/theme/pages/tags/index.astro" });
         injectRoute({ pattern: "/tags/[tag]", entrypoint: "@pkg/theme/pages/tags/[tag].astro" });
         injectRoute({ pattern: "/rss.xml", entrypoint: "@pkg/theme/pages/rss.xml.ts" });
+        injectRoute({ pattern: "/page/[page]", entrypoint: "@pkg/theme/pages/page/[page].astro" });
         injectRoute({ pattern: "/slides/[...slug]", entrypoint: "@pkg/theme/pages/slides/[...slug].astro" });
       },
     },
