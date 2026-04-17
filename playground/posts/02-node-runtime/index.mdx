@@ -1,0 +1,85 @@
+---
+title: "Node.js 运行时深度剖析"
+subtitle: "从 V8 引擎到事件循环的底层机制"
+date: 2026-02-10
+author: "龙野"
+tags: ["Node.js", "性能优化", "V8"]
+category: "工程实践"
+series: "空岛云技术"
+seriesOrder: 2
+draft: false
+description: "深入探索 Node.js 运行时的核心机制，包括 V8 引擎的内存管理、事件循环的六个阶段、以及 libuv 的异步 I/O 模型。"
+---
+
+# Node.js 运行时深度剖析
+
+Node.js 不只是 "JavaScript on the server"。它是一个精密的运行时系统，由 V8、libuv、和一系列 C++ bindings 组成。
+
+## V8 引擎架构
+
+V8 是 Google 开发的高性能 JavaScript 引擎。它的核心是一个 JIT（Just-In-Time）编译器。
+
+### 内存模型
+
+V8 的堆内存分为几个区域：
+
+- **New Space** — 新对象分配区，采用 Scavenge 算法（Cheney's algorithm）
+- **Old Space** — 存活时间较长的对象，采用 Mark-Sweep-Compact 算法
+- **Large Object Space** — 超过一定大小的对象直接分配在这里
+- **Code Space** — JIT 编译后的机器码
+
+```typescript
+// 查看 V8 堆内存使用情况
+const v8 = require("v8");
+const heapStats = v8.getHeapStatistics();
+
+console.log({
+  totalHeap: `${(heapStats.total_heap_size / 1024 / 1024).toFixed(2)} MB`,
+  usedHeap: `${(heapStats.used_heap_size / 1024 / 1024).toFixed(2)} MB`,
+  heapLimit: `${(heapStats.heap_size_limit / 1024 / 1024).toFixed(2)} MB`,
+});
+```
+
+## 事件循环
+
+事件循环是 Node.js 非阻塞 I/O 的核心。它由 libuv 实现，分为六个阶段。
+
+### 六个阶段
+
+1. **Timers** — 执行 setTimeout/setInterval 回调
+2. **Pending callbacks** — 执行延迟到下一次循环的 I/O 回调
+3. **Idle, prepare** — 内部使用
+4. **Poll** — 获取新的 I/O 事件
+5. **Check** — 执行 setImmediate 回调
+6. **Close callbacks** — 执行关闭事件回调
+
+## 性能优化实践
+
+了解底层机制后，我们可以做出更好的性能决策。
+
+### 避免阻塞事件循环
+
+```typescript
+// Bad: 同步计算阻塞事件循环
+function fibonacci(n: number): number {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+// Good: 使用 Worker Threads
+import { Worker, isMainThread, parentPort } from "worker_threads";
+
+if (isMainThread) {
+  const worker = new Worker(__filename);
+  worker.on("message", (result) => console.log(result));
+  worker.postMessage(40);
+} else {
+  parentPort?.on("message", (n) => {
+    parentPort?.postMessage(fibonacci(n));
+  });
+}
+```
+
+## 总结
+
+理解 Node.js 运行时的底层机制，是做好性能优化的基础。

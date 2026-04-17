@@ -22,6 +22,9 @@ const { title } = Astro.props;
     <div class="hidden items-center gap-8 sm:flex">
       <a href="/" class="text-[15px] font-medium transition-colors" style="color: var(--text-secondary);">首页</a>
       <a href="/tags" class="text-[15px] font-medium transition-colors" style="color: var(--text-secondary);">标签</a>
+      <a href="/rss.xml" class="p-1 transition-colors" style="color: var(--text-secondary);" aria-label="RSS 订阅">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+      </a>
       <ThemeToggle client:load />
     </div>
 
