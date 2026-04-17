@@ -85,8 +85,7 @@ description: "SEO 描述"
 
 ```json
 {
-  "framework": "astro",
-  "buildCommand": "pnpm build",
+  "buildCommand": "pnpm --filter playground build",
   "outputDirectory": "playground/dist",
   "installCommand": "pnpm install"
 }

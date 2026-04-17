@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm -C playground dev",
-    "mock": "pnpm -C playground mock",
-    "build": "pnpm -C playground build",
-    "start": "pnpm -C playground start",
+    "dev": "pnpm --filter playground dev",
+    "mock": "pnpm --filter playground mock",
+    "build": "pnpm --filter playground build",
+    "start": "pnpm --filter playground start",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."
   },
