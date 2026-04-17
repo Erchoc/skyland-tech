@@ -2,7 +2,7 @@
 title = "空岛云技术"
 description = "纯技术 + 架构设计文章合集"
 author = "龙野"
-url = "https://example.com"
+url = "https://skyland-tech.vercel.app"
 lang = "zh-CN"
 
 [theme]
@@ -11,7 +11,7 @@ dark = true
 layout = "magazine"
 
 [social]
-github = "https://github.com/example"
+github = "https://github.com/Erchoc/skyland-tech"
 
 [categories]
 list = ["架构设计", "工程实践", "性能优化", "基础设施"]

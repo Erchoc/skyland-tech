@@ -12,7 +12,7 @@ const ONE_WEEK = 60 * 60 * 24 * 7;
 const ONE_YEAR = 60 * 60 * 24 * 365;
 
 export default defineConfig({
-  site: "https://example.com",
+  site: "https://skyland-tech.vercel.app",
   integrations: [
     mdx(),
     react(),
