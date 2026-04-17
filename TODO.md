@@ -27,3 +27,39 @@
 ### P3
 - [ ] 数据统计（Google Analytics / Umami）
 - [ ] 邮件订阅（Newsletter）
+
+## 技术优化 / 技术债
+
+来源：2026-04-17 `/simplify` review 指出但当轮未处理的 finding。
+
+### 字体
+- **[P1] 字体子集化：5.2 MB → ~1 MB**
+  - `packages/theme/src/styles/fonts/LXGWWenKaiLite-Regular.woff2` 是全量子集，首次访问下载 5 MB 过重
+  - 用 `pyftsubset`（fonttools）或 `glyphhanger` 扫描 `playground/posts/**/*.mdx` + 组件提取实际字符集，中文 blog 2000-3500 字足够 → 预期产物 800 KB–1.2 MB
+  - 固化到 `scripts/build-fonts.mjs` + `package.json` 挂 `pnpm fonts:build`；README 记录升级流程，消除"手动跑 ttf2woff2"的会话记忆依赖
+- **[P3] 迁移 Astro 5 `experimental.fonts` API**
+  - 当前手写三件套：`import "...?url"` + `<link preload>` + `@font-face`，分散在 BaseLayout.astro 和 global.css
+  - `experimental.fonts` 可在 `astro.config.mjs` 一处声明自动生成；先验证 API 稳定性再迁
+
+### Tag slug
+- **[P2] `tagToSlug` 泛化**
+  - `packages/theme/src/utils/tag-slug.ts` 只处理 `/` → `-`，不覆盖大小写（"NodeJS" vs "nodejs" 会产生两个路由）、空格、URL 保留字符
+  - 决策待拍板：严格约束 + 注释说明 / 引入 `@sindresorhus/slugify` / 自写 `.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, "-")`
+
+### 构建期性能
+- **[P2] `readingTime` 作为 content collection 派生字段**
+  - `index.astro` 和 `page/[page].astro` 每次构建对每篇 body 重跑 `getReadingTime`，分页页 × 文章数量线性放大
+  - 方案 A：remark plugin 预计算写入 frontmatter；方案 B：`utils/reading-time.ts` 内加 `WeakMap<Entry, string>` 缓存
+
+### 样式一致性
+- **[P3] Tag pill inline style 迁到 scoped `<style>`**
+  - `ArticleLayout.astro:94-98`、`tags/index.astro:38` 的 `.tag-pill` 一半 class、一半 inline style 字符串；与本轮 PostCard 的做法不一致
+- **[P3] 分页 prev/next chevron SVG 仍在两处重复**
+  - `index.astro` 和 `page/[page].astro` 各有两份 15×15 chevron `<svg>` 字面量
+  - 抽 `components/ui/PaginationArrow.astro`（props: direction/href/disabled），或用内联 `<symbol>` + `<use>`
+
+### PWA
+- **[P3] 字体缓存 max-age 365 天 + 文件 hash 复核**
+  - Vite 理应给 `@font-face url(...)` 加 content hash，升级字体时 hash 变 → CacheFirst + 1 年 OK。**需实际验证**：改字体重 build 看 bundle URL 是否变。如不变，改 `StaleWhileRevalidate` 或缩 maxAge
+- **[P3] 离线 navigateFallback 改专属提示页**
+  - 现在 fallback 到 `/index.html`，离线访问未缓存页面会全部兜回首页，易被误解。做一个 `/offline.html` 明确提示
