@@ -4,6 +4,15 @@
 @source "../layouts/**/*.astro";
 @source "../pages/**/*.astro";
 
+/* 霞鹜文楷 Lite（SIL OFL），自托管 woff2，首屏 swap 避免阻塞渲染 */
+@font-face {
+  font-family: "LXGW WenKai";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/LXGWWenKaiLite-Regular.woff2") format("woff2");
+}
+
 /* ─── Design System: HashiCorp-inspired ─── */
 
 @theme {
@@ -32,8 +41,8 @@
   --shadow-whisper: rgba(97, 104, 117, 0.05) 0px 1px 1px, rgba(97, 104, 117, 0.05) 0px 2px 2px;
 
   /* Typography */
-  --font-heading: "DM Sans", "Noto Sans SC", system-ui, -apple-system, sans-serif;
-  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", Helvetica, Arial, sans-serif;
+  --font-heading: "LXGW WenKai", "DM Sans", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+  --font-body: "LXGW WenKai", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", Helvetica, Arial, sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
 
   /* Radius — tight, structural */

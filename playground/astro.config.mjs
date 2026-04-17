@@ -45,6 +45,8 @@ export default defineConfig({
       workbox: {
         // Precache all static HTML, CSS, JS
         globPatterns: ["**/*.{css,js,html,svg,png,jpg,jpeg,gif,webp,woff,woff2}"],
+        // 霞鹜文楷 woff2 ~5.2MB，workbox 单文件 precache 默认上限 2MB，调高到 6MB
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         // Runtime caching for fonts
         runtimeCaching: [
           {
