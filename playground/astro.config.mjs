@@ -13,10 +13,11 @@ export default defineConfig({
     react(),
     sitemap(),
     AstroPWA({
-      registerType: "autoUpdate",
+      // prompt 而非 autoUpdate：避免 SW 更新时自动重载造成的刷新白屏
+      registerType: "prompt",
       manifest: {
-        name: "空岛云技术",
-        short_name: "空岛云",
+        name: "技术分享",
+        short_name: "技术分享",
         description: "纯技术 + 架构设计文章合集",
         start_url: "/",
         display: "standalone",
@@ -43,12 +44,38 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Precache all static HTML, CSS, JS
-        globPatterns: ["**/*.{css,js,html,svg,png,jpg,jpeg,gif,webp,woff,woff2}"],
-        // 霞鹜文楷 woff2 ~5.2MB，workbox 单文件 precache 默认上限 2MB，调高到 6MB
-        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
-        // Runtime caching for fonts
+        // precache 只保留小静态资源：HTML 和字体都走 runtime
+        // - HTML 踢出：98 个文章页过多，且 HTML 走 precache 会被 SW 冷启动阻塞 → 白屏
+        // - 字体踢出：5.2MB 进 precache 会拖慢 SW install → 首次装 PWA 长时间 pending
+        globPatterns: ["**/*.{css,js,svg,png,jpg,jpeg,gif,webp}"],
+        // navigation preload：让 HTML 请求和 SW 启动并行，消除 SW 冷启动间隙的白屏
+        navigationPreload: true,
+        // 离线/SW 未就绪时所有 navigation 兜底到首页，避免浏览器 hang 住
+        navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/\/_astro\//, /\/[^/?]+\.[^/]+$/],
         runtimeCaching: [
+          // HTML / 页面导航：NetworkFirst + 3s 超时，网络挂了回退 cache
+          {
+            urlPattern: ({ request }) => request.mode === "navigate",
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "pages",
+              networkTimeoutSeconds: 3,
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          // 本地字体：CacheFirst，一次加载永久命中
+          {
+            urlPattern: /\.(?:woff2?|ttf)$/,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "fonts-local",
+              expiration: { maxEntries: 5, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          // Google Fonts（DM Sans / JetBrains Mono 走 CDN）
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: "CacheFirst",
