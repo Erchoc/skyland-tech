@@ -17,13 +17,14 @@ interface Props {
   readingTime: string;
   headings: MarkdownHeading[];
   series?: string;
+  slug: string;
   prevPost?: { slug: string; title: string };
   nextPost?: { slug: string; title: string };
 }
 
 const {
   title, subtitle, description, date, updatedDate, author, cover,
-  tags, readingTime, headings, series, prevPost, nextPost,
+  tags, readingTime, headings, series, slug, prevPost, nextPost,
 } = Astro.props;
 
 const formattedDate = date.toLocaleDateString("zh-CN", {
@@ -76,6 +77,14 @@ const formattedUpdated = updatedDate?.toLocaleDateString("zh-CN", {
           )}
           <span style="color: var(--color-border-strong);">·</span>
           <span>{readingTime}</span>
+          <span style="color: var(--color-border-strong);">·</span>
+          <a
+            href={`/slides/${slug}`}
+            class="transition-colors hover:underline"
+            style="color: var(--color-accent-dark);"
+          >
+            演讲模式
+          </a>
         </div>
 
         <div class="mt-4 flex flex-wrap gap-2">

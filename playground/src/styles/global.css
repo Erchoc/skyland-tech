@@ -1,1 +1,5 @@
 @import "@pkg/theme/styles/global.css";
+
+/* Tailwind v4 excludes node_modules from automatic scanning.
+   Explicitly tell it to scan theme package components. */
+@source "../../../packages/theme/src/**/*.{astro,tsx}";

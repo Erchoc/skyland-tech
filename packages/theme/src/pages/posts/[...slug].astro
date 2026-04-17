@@ -32,6 +32,7 @@ const { Content, headings } = await render(post);
   tags={post.data.tags}
   readingTime={getReadingTime(post.body ?? "")}
   headings={headings}
+  slug={post.id}
   series={post.data.series}
   prevPost={prevPost}
   nextPost={nextPost}
