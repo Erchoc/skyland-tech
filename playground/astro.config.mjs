@@ -13,8 +13,8 @@ export default defineConfig({
     react(),
     sitemap(),
     AstroPWA({
-      // prompt 而非 autoUpdate：避免 SW 更新时自动重载造成的刷新白屏
-      registerType: "prompt",
+      // autoUpdate：新 SW 就绪后自动 skipWaiting + claim，下次 navigation 无感生效
+      registerType: "autoUpdate",
       manifest: {
         name: "技术分享",
         short_name: "技术分享",

@@ -24,7 +24,7 @@ const formattedDate = date.toLocaleDateString("zh-CN", {
 <a
   href={`/posts/${slug}`}
   class:list={[
-    "group block overflow-hidden transition-shadow duration-200",
+    "post-card group block overflow-hidden",
     featured && "sm:col-span-2 lg:col-span-3 sm:grid sm:grid-cols-2 sm:gap-0",
   ]}
   style={`
@@ -98,3 +98,22 @@ const formattedDate = date.toLocaleDateString("zh-CN", {
     </div>
   </div>
 </a>
+
+<style>
+  .post-card {
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.15s ease;
+    will-change: transform;
+  }
+  /* 触屏：按下整卡片微缩小 + 蓝色环，明确"按下去了" */
+  .post-card:active {
+    transform: scale(0.985);
+    box-shadow: 0 0 0 1px var(--link), 0 4px 14px rgba(34, 100, 214, 0.14);
+  }
+  /* 鼠标设备：悬停抬升阴影 */
+  @media (hover: hover) {
+    .post-card:hover {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+  }
+</style>
