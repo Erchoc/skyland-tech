@@ -1,0 +1,40 @@
+---
+title: "新一代前端基建神器 Rust"
+subtitle: "Rust 进入前端工具链：性能与工程化的新范式"
+date: 2026-05-25
+tags: ["Rust", "前端工程化", "性能优化", "工具链"]
+category: "技术选型"
+series: "技术选型"
+seriesOrder: 2
+author: "龙野"
+draft: true
+description: "分析 Rust 进入前端工具链的趋势（SWC、Turbopack、Biome、oxc），以及它带来的性能范式转变。"
+---
+
+## Rust 为什么适合前端工具
+
+前端工具链的核心操作——代码解析、转换、打包——本质上是 CPU 密集型的计算任务。JavaScript 在这类场景下的性能瓶颈是结构性的：单线程执行、GC 暂停、JIT 预热。Rust 的零成本抽象、无 GC 和原生多线程能力，恰好精准命中了这些痛点。
+
+SWC 是第一个成功验证这条路的项目。当它证明一个 Rust 编写的 JavaScript 编译器可以比 Babel 快 20-70 倍时，整个社区开始重新思考前端工具的性能上限。这不是小幅优化，而是数量级的提升。
+
+---
+
+## 实践中的代表项目
+
+SWC 之后，Rust 在前端工具链中的渗透加速了。Turbopack 瞄准的是增量构建的极致性能；Biome 想要统一 lint 和 format；oxc 在做一个高性能的 JavaScript 解析器和工具集。这些项目有一个共同点：它们都选择了重写而非包装。
+
+Biome 的实践特别有意思。它同时提供了 linter 和 formatter 的能力，性能比 eslint + prettier 的组合快一个数量级。更重要的是，它证明了一个 Rust 项目可以提供足够好的 JavaScript/TypeScript 开发者体验——安装简单、配置直观、错误信息友好。
+
+---
+
+## 与 Node.js 的互补关系
+
+值得注意的是，Rust 工具并没有完全取代 Node.js，而是形成了互补。性能关键路径（编译、打包、lint）交给 Rust，而插件系统、开发服务器、配置处理仍然大量依赖 Node.js 生态。Vite 就是一个典型的混合架构——dev server 用 Node.js，生产构建用 Rollup（未来可能切换到 Rolldown）。
+
+这种分工是合理的。不是所有代码都需要极致性能，但瓶颈部分的提速可以显著改善整体体验。前端工具链正在走向一个「Rust 内核 + JavaScript 外壳」的混合模式。
+
+---
+
+## 趋势与挑战
+
+Rust 在前端工具链中的地位会继续巩固，但也面临挑战。最大的门槛是 Rust 本身的学习曲线——大多数前端工程师无法直接参与 Rust 工具的开发和调试。这意味着社区贡献的模式会发生变化，核心引擎由少数 Rust 熟练者维护，生态扩展则依赖 JavaScript 插件接口。
