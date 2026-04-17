@@ -36,11 +36,11 @@ const formattedUpdated = updatedDate?.toLocaleDateString("zh-CN", {
 ---
 
 <BaseLayout title={`${title} — 空岛云技术`} description={description}>
-  <Header title="空岛云技术" />
+  <Header title="空岛云技术" variant="dark" />
   <main>
-    {/* Dark article header — full width */}
+    {/* Dark article header — full width, seamless with dark header */}
     <div style="background-color: var(--color-dark-bg);">
-      <div class="mx-auto max-w-[1150px] px-6 py-12 sm:py-16 lg:px-8 lg:py-20">
+      <div class="mx-auto max-w-[1150px] px-6 py-10 sm:py-14 lg:px-8 lg:py-16">
         {series && (
           <p class="label-uppercase" style="color: var(--color-accent-dark);">{series}</p>
         )}
