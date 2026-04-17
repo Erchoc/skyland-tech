@@ -27,12 +27,6 @@ const formattedDate = date.toLocaleDateString("zh-CN", {
     "post-card group block overflow-hidden",
     featured && "sm:col-span-2 lg:col-span-3 sm:grid sm:grid-cols-2 sm:gap-0",
   ]}
-  style={`
-    border-radius: var(--radius-lg);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-whisper);
-  `}
 >
   {cover && (
     <div class:list={["overflow-hidden", featured ? "aspect-[16/10] sm:aspect-auto" : "aspect-video"]}>
@@ -101,19 +95,26 @@ const formattedDate = date.toLocaleDateString("zh-CN", {
 
 <style>
   .post-card {
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-whisper);
     -webkit-tap-highlight-color: transparent;
-    transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.22s ease, border-color 0.15s ease;
     will-change: transform;
   }
-  /* 触屏：按下整卡片微缩小 + 蓝色环，明确"按下去了" */
+  /* 触屏：按下整卡片 scale 缩 4% + 蓝色双层光晕 + 蓝边，强烈"按中了"反馈 */
   .post-card:active {
-    transform: scale(0.985);
-    box-shadow: 0 0 0 1px var(--link), 0 4px 14px rgba(34, 100, 214, 0.14);
+    transform: scale(0.96);
+    border-color: var(--link);
+    box-shadow:
+      0 0 0 2px var(--link),
+      0 10px 28px rgba(34, 100, 214, 0.28);
   }
-  /* 鼠标设备：悬停抬升阴影 */
+  /* 鼠标设备：悬停抬升 */
   @media (hover: hover) {
     .post-card:hover {
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     }
   }
 </style>

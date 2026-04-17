@@ -178,12 +178,13 @@ if (totalPages > 1) {
     user-select: none;
   }
 
-  /* 触屏：按下瞬间明显反馈（scale + 背景加深） */
+  /* 触屏：按下瞬间直接反转成蓝底白字 + 蓝色光晕，对比度最大化 */
   .pagination-btn:active:not(.disabled):not(.active) {
-    background: var(--bg-secondary);
+    background: var(--link);
     border-color: var(--link);
-    color: var(--link);
-    transform: scale(0.94);
+    color: #fff;
+    transform: scale(0.9);
+    box-shadow: 0 4px 16px rgba(34, 100, 214, 0.4);
   }
 
   /* 鼠标设备：hover 高亮，不影响触屏 */

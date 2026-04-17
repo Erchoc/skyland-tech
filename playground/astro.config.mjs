@@ -21,7 +21,7 @@ export default defineConfig({
         description: "纯技术 + 架构设计文章合集",
         start_url: "/",
         display: "standalone",
-        theme_color: "#15181e",
+        theme_color: "#2264d6",
         background_color: "#15181e",
         icons: [
           {
