@@ -8,15 +8,18 @@
 - [x] 演讲模式 overflow 修复
 - [x] 卡片标题固定 2 行
 - [x] Footer 高度缩减
+- [x] 字体子集化 5.2 MB → 812 KB（hybrid 策略，3637 字符）
+- [x] 全文搜索（pagefind + ⌘K 模态）
+- [x] 标题动画（TitleReveal 逐字上浮，四种 variant 可配）
+- [x] 配置层（JSON Schema + TOML loader + Vitest）
+- [x] PWA 支持（离线访问、安装到桌面）
 
 ## 进行中
-- [ ] PWA 支持（离线访问、安装到桌面）
 
 ## 待开发
 
 ### P1
 - [ ] About 页面（个人/团队介绍）
-- [ ] 搜索功能（全文搜索或标题搜索）
 
 ### P2
 - [ ] 归档页（按时间线展示所有文章）
@@ -33,10 +36,6 @@
 来源：2026-04-17 `/simplify` review 指出但当轮未处理的 finding。
 
 ### 字体
-- **[P1] 字体子集化：5.2 MB → ~1 MB**
-  - `packages/theme/src/styles/fonts/LXGWWenKaiLite-Regular.woff2` 是全量子集，首次访问下载 5 MB 过重
-  - 用 `pyftsubset`（fonttools）或 `glyphhanger` 扫描 `playground/posts/**/*.mdx` + 组件提取实际字符集，中文 blog 2000-3500 字足够 → 预期产物 800 KB–1.2 MB
-  - 固化到 `scripts/build-fonts.mjs` + `package.json` 挂 `pnpm fonts:build`；README 记录升级流程，消除"手动跑 ttf2woff2"的会话记忆依赖
 - **[P3] 迁移 Astro 5 `experimental.fonts` API**
   - 当前手写三件套：`import "...?url"` + `<link preload>` + `@font-face`，分散在 BaseLayout.astro 和 global.css
   - `experimental.fonts` 可在 `astro.config.mjs` 一处声明自动生成；先验证 API 稳定性再迁
@@ -59,7 +58,6 @@
   - 抽 `components/ui/PaginationArrow.astro`（props: direction/href/disabled），或用内联 `<symbol>` + `<use>`
 
 ### PWA
-- **[P3] 字体缓存 max-age 365 天 + 文件 hash 复核**
-  - Vite 理应给 `@font-face url(...)` 加 content hash，升级字体时 hash 变 → CacheFirst + 1 年 OK。**需实际验证**：改字体重 build 看 bundle URL 是否变。如不变，改 `StaleWhileRevalidate` 或缩 maxAge
+- **[P3] 字体缓存 max-age 365 天 + 文件 hash 复核**（✓ 验证：Vite 自动给 woff2 加 content hash，无需缩 maxAge）
 - **[P3] 离线 navigateFallback 改专属提示页**
   - 现在 fallback 到 `/index.html`，离线访问未缓存页面会全部兜回首页，易被误解。做一个 `/offline.html` 明确提示
