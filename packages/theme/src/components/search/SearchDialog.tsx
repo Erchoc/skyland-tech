@@ -80,7 +80,7 @@ export function SearchDialog({ shortcut, placeholder }: Props) {
       onClick={close}
     >
       <div
-        className="w-full max-w-[560px] rounded-xl overflow-hidden"
+        className="w-full max-w-[560px] sm:max-w-[680px] rounded-xl overflow-hidden"
         style={{
           background: "#161b22",
           border: "1px solid rgba(255,255,255,0.12)",
