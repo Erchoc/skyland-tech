@@ -8,7 +8,8 @@
     "./components/*": "./src/components/*",
     "./pages/*": "./src/pages/*",
     "./content-config": "./src/content.config.ts",
-    "./integrations/*": "./src/integrations/*"
+    "./integrations/*": "./src/integrations/*",
+    "./config/*": "./src/config/*"
   },
   "peerDependencies": {
     "astro": "^5.0.0"

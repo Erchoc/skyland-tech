@@ -5,6 +5,9 @@ import sitemap from "@astrojs/sitemap";
 import AstroPWA from "@vite-pwa/astro";
 import tailwindcss from "@tailwindcss/vite";
 import { injectThemePages } from "@pkg/theme/integrations/inject-pages";
+import { loadThemeConfig } from "@pkg/theme/config/loader";
+
+const themeConfig = loadThemeConfig();
 
 const ACCENT = "#2264d6";
 const DARK_BG = "#15181e";
@@ -93,7 +96,7 @@ export default defineConfig({
         ],
       },
     }),
-    injectThemePages(),
+    injectThemePages(themeConfig),
   ],
   vite: {
     plugins: [tailwindcss()],
