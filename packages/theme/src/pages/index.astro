@@ -97,7 +97,7 @@ const paginationItems = buildPaginationItems(1, totalPages);
             tags={featured.data.tags}
             cover={featured.data.cover}
             slug={featured.id}
-            readingTime={getReadingTime(featured.body ?? "")}
+            readingTime={getReadingTime(featured.body ?? "", featured.id)}
             featured
           />
         </div>
@@ -120,7 +120,7 @@ const paginationItems = buildPaginationItems(1, totalPages);
                 tags={post.data.tags}
                 cover={post.data.cover}
                 slug={post.id}
-                readingTime={getReadingTime(post.body ?? "")}
+                readingTime={getReadingTime(post.body ?? "", post.id)}
               />
             ))}
           </div>

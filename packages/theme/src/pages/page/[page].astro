@@ -34,7 +34,7 @@ export async function getStaticPaths() {
     date: p.data.date,
     tags: p.data.tags,
     cover: p.data.cover,
-    readingTime: getReadingTime(p.body ?? ""),
+    readingTime: getReadingTime(p.body ?? "", p.id),
   });
 
   let allCards: CardData[] = real.map(toCard);

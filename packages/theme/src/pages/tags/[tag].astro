@@ -46,7 +46,7 @@ const { tag, posts } = Astro.props;
           tags={post.data.tags}
           cover={post.data.cover}
           slug={post.id}
-          readingTime={getReadingTime(post.body ?? "")}
+          readingTime={getReadingTime(post.body ?? "", post.id)}
         />
       ))}
     </div>
