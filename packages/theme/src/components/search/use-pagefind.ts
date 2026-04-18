@@ -20,13 +20,19 @@ interface PagefindAPI {
 let cached: PagefindAPI | null = null;
 let loadPromise: Promise<PagefindAPI | null> | null = null;
 
+// Pagefind 索引只在 astro build 后生成。dev 模式下 /pagefind/ 不存在，
+// 必须先 HEAD 预检，再用变量形式 import（绕开 Vite 静态分析，否则 dev
+// 会尝试把这个字面量路径当模块解析、直接 500）。
 async function loadPagefind(): Promise<PagefindAPI | null> {
   if (cached) return cached;
   if (loadPromise) return loadPromise;
   loadPromise = (async () => {
     try {
+      const head = await fetch("/pagefind/pagefind.js", { method: "HEAD" });
+      if (!head.ok) return null;
+      const url = "/pagefind/pagefind.js";
       // @ts-expect-error - runtime path, no types
-      const mod = await import(/* @vite-ignore */ "/pagefind/pagefind.js");
+      const mod = await import(/* @vite-ignore */ url);
       cached = mod as PagefindAPI;
       return cached;
     } catch {
