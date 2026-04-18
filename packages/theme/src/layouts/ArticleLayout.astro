@@ -3,6 +3,8 @@ import BaseLayout from "./BaseLayout.astro";
 import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
 import TableOfContents from "../components/article/TableOfContents.astro";
+import TitleReveal from "../components/ui/TitleReveal.astro";
+import { loadThemeConfig } from "../config/loader.ts";
 import { tagToSlug } from "../utils/tag-slug.ts";
 import type { MarkdownHeading, ImageMetadata } from "astro";
 
@@ -34,6 +36,9 @@ const formattedDate = date.toLocaleDateString("zh-CN", {
 const formattedUpdated = updatedDate?.toLocaleDateString("zh-CN", {
   year: "numeric", month: "long", day: "numeric",
 });
+const config = loadThemeConfig();
+const titleEnabled = config.features.animation && config.animation.apply_to.includes("article-title");
+const subtitleEnabled = config.features.animation && config.animation.apply_to.includes("article-subtitle");
 ---
 
 <BaseLayout title={`${title} — 空岛云技术`} description={description}>
@@ -46,24 +51,23 @@ const formattedUpdated = updatedDate?.toLocaleDateString("zh-CN", {
           <p class="label-uppercase" style="color: var(--color-accent-dark);">{series}</p>
         )}
 
-        <h1
+        <TitleReveal
+          text={title}
+          as="h1"
           class="mt-3 max-w-3xl"
-          style={`
-            font-family: var(--font-heading);
-            font-feature-settings: "kern" 1;
-            font-weight: 600;
-            font-size: clamp(1.875rem, 4vw + 0.5rem, 3.25rem);
-            line-height: 1.17;
-            color: var(--color-dark-text);
-          `}
-        >
-          {title}
-        </h1>
+          style={`font-family: var(--font-heading); font-feature-settings: "kern" 1; font-weight: 600; font-size: clamp(1.875rem, 4vw + 0.5rem, 3.25rem); line-height: 1.17; color: var(--color-dark-text);`}
+          enabled={titleEnabled}
+        />
 
         {subtitle && (
-          <p class="mt-4 max-w-2xl text-[1.25rem] leading-relaxed" style="color: var(--color-dark-text-secondary);">
-            {subtitle}
-          </p>
+          <TitleReveal
+            text={subtitle}
+            as="p"
+            delay={350}
+            class="mt-4 max-w-2xl text-[1.25rem] leading-relaxed"
+            style="color: var(--color-dark-text-secondary);"
+            enabled={subtitleEnabled}
+          />
         )}
 
         <div class="mt-6 flex flex-wrap items-center gap-3 text-[13px]" style="color: var(--color-text-helper);">
