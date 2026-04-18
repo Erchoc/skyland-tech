@@ -7,9 +7,10 @@ import { usePagefind } from "./use-pagefind.ts";
 interface Props {
   shortcut: string | string[];
   placeholder: string;
+  trackSearch: boolean;
 }
 
-export function SearchDialog({ shortcut, placeholder }: Props) {
+export function SearchDialog({ shortcut, placeholder, trackSearch }: Props) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
@@ -67,6 +68,12 @@ export function SearchDialog({ shortcut, placeholder }: Props) {
   useEffect(() => {
     setActive(0);
   }, [query]);
+
+  useEffect(() => {
+    if (!trackSearch || !open || query.length < 2 || loading) return;
+    if (typeof window.umami?.track !== "function") return;
+    window.umami.track("search", { query, results: results.length });
+  }, [trackSearch, open, query, loading, results.length]);
 
   if (!open) return null;
 

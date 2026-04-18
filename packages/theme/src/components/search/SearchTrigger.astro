@@ -43,6 +43,7 @@ const color = variant === "dark" ? "#9ca3af" : "#656a76";
       client:idle
       shortcut={config.search.shortcut}
       placeholder={config.search.placeholder}
+      trackSearch={config.analytics.provider === "umami" && config.analytics.track_search}
     />
   </>
 )}
