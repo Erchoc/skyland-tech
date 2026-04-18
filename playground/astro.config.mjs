@@ -6,6 +6,8 @@ import AstroPWA from "@vite-pwa/astro";
 import tailwindcss from "@tailwindcss/vite";
 import { injectThemePages } from "@pkg/theme/integrations/inject-pages";
 import { loadThemeConfig } from "@pkg/theme/config/loader";
+import { isSearchEnabled } from "@pkg/theme/integrations/search";
+import pagefind from "astro-pagefind";
 
 const themeConfig = loadThemeConfig();
 
@@ -22,6 +24,7 @@ export default defineConfig({
     sitemap(),
     AstroPWA({
       registerType: "autoUpdate",
+
       manifest: {
         name: "技术分享",
         description: "纯技术 + 架构设计文章合集",
@@ -93,11 +96,30 @@ export default defineConfig({
               cacheableResponse: { statuses: [0, 200] },
             },
           },
+          {
+            urlPattern: /\/pagefind\/pagefind\.js$/,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "pagefind-core",
+              expiration: { maxEntries: 2, maxAgeSeconds: ONE_YEAR },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            urlPattern: /\/pagefind\/(fragment|index)\//,
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "pagefind-chunks",
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
         ],
       },
     }),
+    isSearchEnabled(themeConfig) ? pagefind() : null,
     injectThemePages(themeConfig),
-  ],
+  ].filter(Boolean),
   vite: {
     plugins: [tailwindcss()],
     build: {
