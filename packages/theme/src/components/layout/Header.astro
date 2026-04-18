@@ -19,7 +19,7 @@ const config = loadThemeConfig();
 const logoAnim = config.features.animation && config.animation.apply_to.includes("nav-logo");
 ---
 
-<header class="sticky top-0 z-50" style={`background-color: ${bg}; border-bottom: 1px solid ${borderColor};`}>
+<header data-pagefind-ignore class="sticky top-0 z-50" style={`background-color: ${bg}; border-bottom: 1px solid ${borderColor};`}>
   <nav class="mx-auto flex max-w-[1150px] items-center justify-between px-6 py-3 lg:px-8">
     <a href="/" class="text-[1.19rem] font-bold tracking-tight" style={`color: ${textColor}; font-family: var(--font-heading); font-feature-settings: "kern" 1;`}>
       <TitleReveal text={title} as="span" enabled={logoAnim} />

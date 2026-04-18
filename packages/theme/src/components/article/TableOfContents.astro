@@ -10,7 +10,7 @@ const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 ---
 
 {toc.length > 0 && (
-  <nav>
+  <nav data-pagefind-ignore>
     <p class="label-uppercase mb-4" style="color: var(--text-helper);">目录</p>
     <ul style="border-left: 1px solid var(--border);">
       {toc.map((heading) => (
