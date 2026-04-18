@@ -1,0 +1,80 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/layout/Header.astro";
+import Footer from "../components/layout/Footer.astro";
+import { tagToSlug } from "../utils/tag-slug.ts";
+
+const posts = (await getCollection("posts", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+// Group by year
+const byYear = new Map<number, typeof posts>();
+for (const p of posts) {
+  const y = p.data.date.getFullYear();
+  if (!byYear.has(y)) byYear.set(y, []);
+  byYear.get(y)!.push(p);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
+---
+
+<BaseLayout title="归档 — 空岛云技术" description="所有文章按时间线归档">
+  <Header title="空岛云技术" />
+  <main>
+    <section class="mx-auto max-w-[1150px] px-6 pt-16 pb-8 lg:px-8 lg:pt-20 lg:pb-10">
+      <div class="mb-8">
+        <p class="label-uppercase" style="color: var(--text-helper);">归档</p>
+        <h1 class="mt-2 text-[2rem] font-semibold tracking-tight" style="color: var(--text);">
+          所有文章
+        </h1>
+        <p class="mt-2 text-[14px]" style="color: var(--text-helper);">共 {posts.length} 篇</p>
+      </div>
+
+      {years.map((y) => (
+        <section class="mb-10">
+          <h2 class="mb-4 flex items-baseline gap-3 text-[1.25rem] font-semibold" style="color: var(--text);">
+            <span>{y}</span>
+            <span class="text-[13px] font-normal" style="color: var(--text-helper);">
+              · {byYear.get(y)!.length} 篇
+            </span>
+          </h2>
+          <ul class="space-y-3" style="border-left: 1px solid var(--border); padding-left: 1rem;">
+            {byYear.get(y)!.map((p) => (
+              <li class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4">
+                <time
+                  class="shrink-0 text-[13px] tabular-nums"
+                  style="color: var(--text-helper);"
+                  datetime={p.data.date.toISOString()}
+                >
+                  {p.data.date.toLocaleDateString("zh-CN", { month: "long", day: "numeric" })}
+                </time>
+                <a
+                  href={`/posts/${p.id}`}
+                  class="text-[15px] font-medium transition-colors hover:underline"
+                  style="color: var(--text);"
+                >
+                  {p.data.title}
+                </a>
+                {p.data.tags && p.data.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-1.5 sm:ml-auto">
+                    {p.data.tags.slice(0, 3).map((tag: string) => (
+                      <a
+                        href={`/tags/${tagToSlug(tag)}`}
+                        class="text-[11px] transition-colors"
+                        style="padding: 2px 7px; border-radius: var(--radius-sm); background: var(--bg-secondary); color: var(--text-helper);"
+                      >
+                        {tag}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>
