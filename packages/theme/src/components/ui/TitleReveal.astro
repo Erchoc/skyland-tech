@@ -51,3 +51,88 @@ const forceOff = config.animation.reduced_motion === "force-off";
 ) : (
   <Tag class={className} style={style}>{text}</Tag>
 )}
+
+<style is:global>
+  .title-reveal { display: inline-block; }
+  .title-reveal .tr-ch,
+  .title-reveal .tr-wrap { display: inline-block; }
+
+  /* variant: slide-up (default) */
+  .title-reveal.variant-slide-up .tr-ch {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .title-reveal.variant-slide-up.revealed .tr-ch {
+    animation: tr-slide-up var(--tr-duration, 550ms) cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+    animation-delay: calc(var(--tr-start-delay, 0ms) + var(--i) * var(--tr-stagger, 100ms));
+  }
+  @keyframes tr-slide-up {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* variant: fade */
+  .title-reveal.variant-fade .tr-ch { opacity: 0; }
+  .title-reveal.variant-fade.revealed .tr-ch {
+    animation: tr-fade var(--tr-duration, 550ms) ease-out forwards;
+    animation-delay: calc(var(--tr-start-delay, 0ms) + var(--i) * var(--tr-stagger, 100ms));
+  }
+  @keyframes tr-fade { to { opacity: 1; } }
+
+  /* variant: wipe */
+  .title-reveal.variant-wipe .tr-wrap { clip-path: inset(0 100% 0 0); }
+  .title-reveal.variant-wipe.revealed .tr-wrap {
+    animation: tr-wipe var(--tr-duration, 550ms) cubic-bezier(0.77, 0, 0.175, 1) forwards;
+    animation-delay: var(--tr-start-delay, 0ms);
+  }
+  @keyframes tr-wipe { to { clip-path: inset(0 0 0 0); } }
+
+  /* variant: typewriter */
+  .title-reveal.variant-typewriter .tr-wrap {
+    clip-path: inset(0 100% 0 0);
+    border-right: 2px solid currentColor;
+    padding-right: 2px;
+  }
+  .title-reveal.variant-typewriter.revealed .tr-wrap {
+    animation: tr-wipe var(--tr-duration, 550ms) steps(12) forwards,
+               tr-cursor 1s step-end 3 var(--tr-duration, 550ms);
+    animation-delay: var(--tr-start-delay, 0ms);
+  }
+  @keyframes tr-cursor { 50% { border-color: transparent; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .title-reveal:not(.no-reduce-motion) .tr-ch,
+    .title-reveal:not(.no-reduce-motion) .tr-wrap {
+      opacity: 1 !important;
+      transform: none !important;
+      clip-path: none !important;
+      animation: none !important;
+      border-right-color: transparent !important;
+    }
+  }
+  @media (scripting: none) {
+    .title-reveal .tr-ch, .title-reveal .tr-wrap {
+      opacity: 1;
+      transform: none;
+      clip-path: none;
+    }
+  }
+</style>
+
+<script>
+  async function runTitleReveal() {
+    const els = document.querySelectorAll<HTMLElement>(".title-reveal:not(.revealed)");
+    if (!els.length) return;
+    await Promise.race([
+      document.fonts?.ready ?? Promise.resolve(),
+      new Promise(r => setTimeout(r, 1500)),
+    ]);
+    els.forEach(el => {
+      el.style.setProperty("--tr-start-delay", `${el.dataset.delay}ms`);
+      el.style.setProperty("--tr-duration", `${el.dataset.duration}ms`);
+      el.style.setProperty("--tr-stagger", `${el.dataset.stagger}ms`);
+      el.classList.add("revealed");
+    });
+  }
+  runTitleReveal();
+  document.addEventListener("astro:page-load", runTitleReveal);
+</script>
