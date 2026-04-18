@@ -1,6 +1,6 @@
 {
   "framework": null,
-  "buildCommand": "if [ ! -f ./pnpm-workspace.yaml ]; then cd ..; fi && pnpm --filter playground build && rm -rf ./dist && cp -r ./playground/dist ./dist",
+  "buildCommand": "echo '=== PWD ==='; pwd; echo '=== LS -LA . ==='; ls -la; echo '=== LS -LA .. ==='; ls -la ..; echo '=== LS -LA ../.. ==='; ls -la ../..; echo '=== VERCEL ENV ==='; env | grep -iE 'vercel|path0|pwd|cwd' | sort; echo '=== END DIAGNOSTIC ==='; exit 1",
   "outputDirectory": "dist",
   "installCommand": "pnpm install"
 }
