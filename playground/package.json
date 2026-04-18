@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "mock": "MOCK_POSTS=1 astro dev",
+    "dev": "astro dev --host",
+    "mock": "MOCK_POSTS=1 astro dev --host",
     "build": "astro build",
     "start": "astro preview"
   },

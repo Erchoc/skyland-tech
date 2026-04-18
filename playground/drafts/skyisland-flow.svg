@@ -1,0 +1,58 @@
+<svg width="900" height="260" viewBox="0 0 900 260" xmlns="http://www.w3.org/2000/svg" font-family="'SF Pro Display', 'PingFang SC', sans-serif">
+  <defs>
+    <linearGradient id="bg4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f1117"/>
+      <stop offset="100%" style="stop-color:#1a1d2e"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#3b82f6" opacity="0.6"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="260" rx="12" fill="url(#bg4)" stroke="#2a2d3e" stroke-width="1.5"/>
+  <text x="450" y="36" text-anchor="middle" fill="#475569" font-size="11" letter-spacing="3">空岛 3.0 · 用户部署流程</text>
+
+  <!-- Step 1 -->
+  <rect x="36" y="64" width="156" height="140" rx="8" fill="#1e2538" stroke="#334155" stroke-width="1"/>
+  <text x="114" y="94" text-anchor="middle" fill="#60a5fa" font-size="28">①</text>
+  <text x="114" y="124" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="500">创建应用</text>
+  <text x="114" y="148" text-anchor="middle" fill="#64748b" font-size="11">选择语言 / 框架</text>
+  <text x="114" y="166" text-anchor="middle" fill="#64748b" font-size="11">平台生成仓库模板</text>
+  <text x="114" y="184" text-anchor="middle" fill="#64748b" font-size="11">clone 到本地</text>
+
+  <!-- Arrow 1 -->
+  <line x1="196" y1="134" x2="234" y2="134" stroke="#3b82f6" stroke-width="1.5" stroke-opacity="0.5" marker-end="url(#arr)"/>
+
+  <!-- Step 2 -->
+  <rect x="238" y="64" width="156" height="140" rx="8" fill="#1e2538" stroke="#334155" stroke-width="1"/>
+  <text x="316" y="94" text-anchor="middle" fill="#60a5fa" font-size="28">②</text>
+  <text x="316" y="124" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="500">本地开发</text>
+  <text x="316" y="148" text-anchor="middle" fill="#64748b" font-size="11">pnpm dev / go run</text>
+  <text x="316" y="166" text-anchor="middle" fill="#64748b" font-size="11">遵循平台约定</text>
+  <text x="316" y="184" text-anchor="middle" fill="#64748b" font-size="11">端口 7758</text>
+
+  <!-- Arrow 2 -->
+  <line x1="398" y1="134" x2="436" y2="134" stroke="#3b82f6" stroke-width="1.5" stroke-opacity="0.5" marker-end="url(#arr)"/>
+
+  <!-- Step 3 -->
+  <rect x="440" y="64" width="156" height="140" rx="8" fill="#1e2538" stroke="#334155" stroke-width="1"/>
+  <text x="518" y="94" text-anchor="middle" fill="#60a5fa" font-size="28">③</text>
+  <text x="518" y="124" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="500">一键部署</text>
+  <text x="518" y="148" text-anchor="middle" fill="#64748b" font-size="11">df up</text>
+  <text x="518" y="166" text-anchor="middle" fill="#64748b" font-size="11">或页面点击部署</text>
+  <text x="518" y="184" text-anchor="middle" fill="#64748b" font-size="11">自动构建镜像</text>
+
+  <!-- Arrow 3 -->
+  <line x1="600" y1="134" x2="638" y2="134" stroke="#3b82f6" stroke-width="1.5" stroke-opacity="0.5" marker-end="url(#arr)"/>
+
+  <!-- Step 4 -->
+  <rect x="642" y="64" width="222" height="140" rx="8" fill="#0d2137" stroke="#3b82f6" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="753" y="94" text-anchor="middle" fill="#60a5fa" font-size="28">④</text>
+  <text x="753" y="124" text-anchor="middle" fill="#60a5fa" font-size="13" font-weight="600">服务上线</text>
+  <text x="753" y="148" text-anchor="middle" fill="#94a3b8" font-size="11">获得访问 URL</text>
+  <text x="753" y="168" text-anchor="middle" fill="#4ade80" font-size="11">*.alibaba-inc.com</text>
+  <text x="753" y="188" text-anchor="middle" fill="#64748b" font-size="10">df logs 实时查看日志</text>
+
+  <!-- Bottom note -->
+  <text x="450" y="234" text-anchor="middle" fill="#334155" font-size="11">全程无需理解 K8s · 无需写 Dockerfile · 无需申请机器资源</text>
+</svg>

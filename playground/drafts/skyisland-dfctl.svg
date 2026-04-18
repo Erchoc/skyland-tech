@@ -1,0 +1,69 @@
+<svg width="900" height="380" viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg" font-family="'SF Mono', 'JetBrains Mono', 'Fira Code', monospace">
+  <defs>
+    <linearGradient id="termBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1d2e"/>
+      <stop offset="100%" style="stop-color:#0f1117"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Terminal window -->
+  <rect width="900" height="380" rx="12" fill="url(#termBg)" stroke="#2a2d3e" stroke-width="1.5"/>
+
+  <!-- Title bar -->
+  <rect width="900" height="44" rx="12" fill="#252836"/>
+  <rect y="32" width="900" height="12" fill="#252836"/>
+  <circle cx="24" cy="22" r="7" fill="#ff5f57"/>
+  <circle cx="46" cy="22" r="7" fill="#febc2e"/>
+  <circle cx="68" cy="22" r="7" fill="#28c840"/>
+  <text x="450" y="27" text-anchor="middle" fill="#666" font-size="12" font-family="'SF Pro Display', sans-serif">dfctl — deploy fast</text>
+
+  <!-- Command 1: df up -->
+  <text x="36" y="88" fill="#666" font-size="13">$</text>
+  <text x="52" y="88" fill="#e2e8f0" font-size="13">df up</text>
+  <text x="36" y="112" fill="#4ade80" font-size="12">✓  Detecting runtime...</text>
+  <text x="36" y="132" fill="#4ade80" font-size="12">✓  Building image (node:22)...</text>
+  <text x="36" y="152" fill="#4ade80" font-size="12">✓  Pushing to registry...</text>
+  <text x="36" y="172" fill="#4ade80" font-size="12">✓  Deploying to skyisland...</text>
+  <text x="36" y="196" fill="#60a5fa" font-size="13" font-weight="bold">🚀  Live: https://my-app.alibaba-inc.com</text>
+
+  <!-- Divider -->
+  <line x1="36" y1="216" x2="540" y2="216" stroke="#2a2d3e" stroke-width="1"/>
+
+  <!-- Command 2: df logs -->
+  <text x="36" y="240" fill="#666" font-size="13">$</text>
+  <text x="52" y="240" fill="#e2e8f0" font-size="13">df logs <tspan fill="#94a3b8">--tail</tspan></text>
+  <text x="36" y="262" fill="#64748b" font-size="12">[2026-04-17 10:23:01]</text>
+  <text x="196" y="262" fill="#4ade80" font-size="12">INFO</text>
+  <text x="236" y="262" fill="#94a3b8" font-size="12">Server started on :7758</text>
+  <text x="36" y="282" fill="#64748b" font-size="12">[2026-04-17 10:23:04]</text>
+  <text x="196" y="282" fill="#60a5fa" font-size="12">REQ </text>
+  <text x="236" y="282" fill="#94a3b8" font-size="12">GET /api/health 200 3ms</text>
+
+  <!-- Divider -->
+  <line x1="36" y1="300" x2="540" y2="300" stroke="#2a2d3e" stroke-width="1"/>
+
+  <!-- Command 3: df link -->
+  <text x="36" y="324" fill="#666" font-size="13">$</text>
+  <text x="52" y="324" fill="#e2e8f0" font-size="13">df link</text>
+  <text x="36" y="348" fill="#4ade80" font-size="12">✓  Linked to project <tspan fill="#f59e0b">my-app</tspan> on Skyisland</text>
+
+  <!-- Right side: comparison badge -->
+  <rect x="590" y="76" width="274" height="220" rx="8" fill="#0f1117" stroke="#2a2d3e" stroke-width="1"/>
+  <text x="727" y="104" text-anchor="middle" fill="#64748b" font-size="11" font-family="'SF Pro Display', sans-serif" letter-spacing="2">对比</text>
+
+  <text x="610" y="134" fill="#94a3b8" font-size="12" font-family="'SF Pro Display', sans-serif">railway up</text>
+  <rect x="720" y="120" width="72" height="22" rx="4" fill="#ef4444" fill-opacity="0.15" stroke="#ef4444" stroke-opacity="0.3" stroke-width="1"/>
+  <text x="756" y="135" text-anchor="middle" fill="#ef4444" font-size="11" font-family="'SF Pro Display', sans-serif">付费功能</text>
+
+  <text x="610" y="170" fill="#94a3b8" font-size="12" font-family="'SF Pro Display', sans-serif">railway logs</text>
+  <rect x="720" y="156" width="72" height="22" rx="4" fill="#ef4444" fill-opacity="0.15" stroke="#ef4444" stroke-opacity="0.3" stroke-width="1"/>
+  <text x="756" y="171" text-anchor="middle" fill="#ef4444" font-size="11" font-family="'SF Pro Display', sans-serif">付费功能</text>
+
+  <text x="610" y="206" fill="#94a3b8" font-size="12" font-family="'SF Pro Display', sans-serif">railway link</text>
+  <rect x="720" y="192" width="72" height="22" rx="4" fill="#ef4444" fill-opacity="0.15" stroke="#ef4444" stroke-opacity="0.3" stroke-width="1"/>
+  <text x="756" y="207" text-anchor="middle" fill="#ef4444" font-size="11" font-family="'SF Pro Display', sans-serif">付费功能</text>
+
+  <rect x="606" y="236" width="242" height="44" rx="6" fill="#4ade80" fill-opacity="0.08" stroke="#4ade80" stroke-opacity="0.3" stroke-width="1"/>
+  <text x="727" y="255" text-anchor="middle" fill="#4ade80" font-size="12" font-family="'SF Pro Display', sans-serif">df 对应命令</text>
+  <text x="727" y="272" text-anchor="middle" fill="#4ade80" font-size="13" font-family="'SF Pro Display', sans-serif" font-weight="600">全部免费 ✦</text>
+</svg>
