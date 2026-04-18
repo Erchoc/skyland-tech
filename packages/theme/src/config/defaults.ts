@@ -29,6 +29,7 @@ export const DEFAULTS: ThemeConfig = {
     provider: "none",
     site_id: "",
     script_src: "https://cloud.umami.is/script.js",
+    host_url: "",
     track_search: false,
     respect_dnt: true,
   },

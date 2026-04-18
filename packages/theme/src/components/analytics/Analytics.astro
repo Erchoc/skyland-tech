@@ -2,12 +2,12 @@
 import { loadThemeConfig } from "../../config/loader.ts";
 
 const config = loadThemeConfig();
-const { provider, site_id, script_src, respect_dnt } = config.analytics;
+const { provider, site_id, script_src, host_url, respect_dnt } = config.analytics;
 const active = provider === "umami" && site_id.length > 0;
 ---
 
 {active && respect_dnt && (
-  <script is:inline define:vars={{ scriptSrc: script_src, siteId: site_id }}>
+  <script is:inline define:vars={{ scriptSrc: script_src, siteId: site_id, hostUrl: host_url }}>
     (function () {
       var dnt = navigator.doNotTrack || window.doNotTrack;
       if (dnt === "1" || dnt === "yes") return;
@@ -15,11 +15,12 @@ const active = provider === "umami" && site_id.length > 0;
       s.defer = true;
       s.src = scriptSrc;
       s.setAttribute("data-website-id", siteId);
+      if (hostUrl) s.setAttribute("data-host-url", hostUrl);
       document.head.appendChild(s);
     })();
   </script>
 )}
 
 {active && !respect_dnt && (
-  <script defer src={script_src} data-website-id={site_id}></script>
+  <script defer src={script_src} data-website-id={site_id} data-host-url={host_url || undefined}></script>
 )}

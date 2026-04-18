@@ -45,6 +45,8 @@ preload = true
 [analytics]
 provider = "umami"
 site_id = "13fe5fca-9b91-4a17-a11a-1b5fb3413994"
-script_src = "https://cloud.umami.is/script.js"
+# 走 Vercel rewrites 代理到 cloud.umami.is，绕开广告屏蔽对第三方域名的拦截
+script_src = "/u/script.js"
+host_url = "/u"
 track_search = true
 respect_dnt = true

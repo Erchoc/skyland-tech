@@ -40,6 +40,7 @@ export interface ThemeConfig {
     provider: AnalyticsProvider;
     site_id: string;
     script_src: string;
+    host_url: string;
     track_search: boolean;
     respect_dnt: boolean;
   };
