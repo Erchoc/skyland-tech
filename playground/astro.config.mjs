@@ -53,10 +53,11 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{css,js,svg,png,jpg,jpeg,gif,webp}"],
-        // HTML 和字体走 runtime caching（不 precache）：避免 SW install 阻塞 → 白屏
+        // offline.html 必须 precache，因为 navigateFallback 要在断网时可取；
+        // 首页 index.html 顺便进 precache 当"离线可看"兜底
+        globPatterns: ["**/*.{css,js,svg,png,jpg,jpeg,gif,webp}", "offline.html", "index.html"],
         navigationPreload: true,
-        navigateFallback: "/index.html",
+        navigateFallback: "/offline.html",
         navigateFallbackDenylist: [/\/_astro\//, /\/[^/?]+\.[^/]+$/],
         runtimeCaching: [
           {

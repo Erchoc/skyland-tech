@@ -1,0 +1,67 @@
+---
+export const prerender = true;
+import Footer from "@pkg/theme/components/layout/Footer.astro";
+import Header from "@pkg/theme/components/layout/Header.astro";
+import BaseLayout from "@pkg/theme/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="离线 — 空岛云技术" description="当前处于离线状态">
+  <Header title="空岛云技术" />
+  <main class="flex flex-1 items-center justify-center px-6" style="min-height: calc(100dvh - 200px);">
+    <div class="flex max-w-md flex-col items-center text-center">
+      <div class="relative select-none" aria-hidden="true">
+        <span
+          class="block font-bold leading-none"
+          style={`
+            font-family: var(--font-heading);
+            font-feature-settings: "kern" 1;
+            font-size: clamp(5rem, 15vw, 9rem);
+            letter-spacing: -0.04em;
+            color: transparent;
+            -webkit-text-stroke: 1.5px var(--border);
+          `}
+        >
+          离线
+        </span>
+      </div>
+
+      <p class="mt-6 text-[15px]" style="color: var(--text-secondary);">
+        网络暂时不可用。你访问的这篇文章还没被离线缓存，或者当前真的没网。
+      </p>
+
+      <p class="mt-3 text-[13px]" style="color: var(--text-helper);">
+        已经访问过的文章、首页和静态资源（字体 / 图片 / 样式）依旧可以在离线时正常查看。
+      </p>
+
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <button
+          id="offline-retry-btn"
+          type="button"
+          class="rounded-md px-4 py-2 text-[14px] font-medium transition-colors"
+          style="background: var(--link); color: #fff; border: none; cursor: pointer;"
+        >
+          重试
+        </button>
+        <a
+          href="/"
+          class="rounded-md px-4 py-2 text-[14px] font-medium transition-colors"
+          style="border: 1px solid var(--border); color: var(--text);"
+        >
+          返回首页
+        </a>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<script>
+  document.getElementById("offline-retry-btn")?.addEventListener("click", () => {
+    // 如果上一跳存在，回到原目标页；否则刷新当前离线页
+    if (document.referrer && document.referrer !== location.href) {
+      location.href = document.referrer;
+    } else {
+      location.reload();
+    }
+  });
+</script>
