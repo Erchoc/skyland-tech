@@ -41,3 +41,10 @@ subset_strategy = "hybrid"
 baseline_charset = "cjk-3500"
 scan_globs = ["playground/posts/**/*.mdx", "packages/theme/src/**/*.{astro,tsx,ts}"]
 preload = true
+
+[analytics]
+provider = "umami"
+site_id = "13fe5fca-9b91-4a17-a11a-1b5fb3413994"
+script_src = "https://cloud.umami.is/script.js"
+track_search = true
+respect_dnt = true

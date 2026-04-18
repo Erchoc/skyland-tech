@@ -1,3 +1,4 @@
+export type AnalyticsProvider = "umami" | "none";
 export type AnimationVariant = "slide-up" | "fade" | "wipe" | "typewriter" | "none";
 export type AnimationLocation = "hero" | "article-title" | "article-subtitle" | "nav-logo";
 export type ReducedMotionMode = "respect" | "force-off";
@@ -34,5 +35,12 @@ export interface ThemeConfig {
     baseline_charset: string;
     scan_globs: string[];
     preload: boolean;
+  };
+  analytics: {
+    provider: AnalyticsProvider;
+    site_id: string;
+    script_src: string;
+    track_search: boolean;
+    respect_dnt: boolean;
   };
 }

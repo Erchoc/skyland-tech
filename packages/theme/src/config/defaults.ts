@@ -25,4 +25,11 @@ export const DEFAULTS: ThemeConfig = {
     scan_globs: ["playground/posts/**/*.mdx", "packages/theme/src/**/*.{astro,tsx,ts}"],
     preload: true,
   },
+  analytics: {
+    provider: "none",
+    site_id: "",
+    script_src: "https://cloud.umami.is/script.js",
+    track_search: false,
+    respect_dnt: true,
+  },
 };
