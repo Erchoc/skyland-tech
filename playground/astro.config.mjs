@@ -12,7 +12,7 @@ const ONE_WEEK = 60 * 60 * 24 * 7;
 const ONE_YEAR = 60 * 60 * 24 * 365;
 
 export default defineConfig({
-  site: "https://skyland-tech.longye.site",
+  site: "https://tech.longye.site",
   integrations: [
     mdx(),
     react(),
