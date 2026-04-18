@@ -16,6 +16,8 @@
     "@pkg/theme": "workspace:*",
     "@tailwindcss/vite": "^4.0.0",
     "astro": "^5.0.0",
+    "astro-pagefind": "^1.8.6",
+    "pagefind": "^1.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4.0.0"
