@@ -24,11 +24,13 @@ export function buildCharset(strategy, scanned, baseline) {
   return out;
 }
 
+// 基于内容的 hash——不用 mtime，因为 git checkout 会把 mtime 改成当下时刻，
+// 导致假阳性漂移。构建期额外读一遍文件的开销对 ~30 个源文件可忽略。
 function hashFiles(globs) {
-  const files = fg.sync(globs, { cwd: ROOT, stats: true });
+  const files = fg.sync(globs, { cwd: ROOT });
   const h = createHash("sha256");
-  for (const f of files.sort((a, b) => a.path.localeCompare(b.path))) {
-    h.update(f.path).update(String(f.stats.size)).update(String(f.stats.mtimeMs));
+  for (const f of files.sort()) {
+    h.update(f).update(readFileSync(resolve(ROOT, f)));
   }
   return h.digest("hex").slice(0, 16);
 }

@@ -17,10 +17,11 @@ const meta = JSON.parse(readFileSync(META, "utf8"));
 const cfg = parseTOML(readFileSync(CONFIG, "utf8"));
 const globs = cfg.fonts?.scan_globs ?? [];
 
-const files = fg.sync(globs, { cwd: ROOT, stats: true });
+// 基于内容的 hash，和 build-fonts.mjs 的 hashFiles 必须算法一致
+const files = fg.sync(globs, { cwd: ROOT });
 const h = createHash("sha256");
-for (const f of files.sort((a, b) => a.path.localeCompare(b.path))) {
-  h.update(f.path).update(String(f.stats.size)).update(String(f.stats.mtimeMs));
+for (const f of files.sort()) {
+  h.update(f).update(readFileSync(resolve(ROOT, f)));
 }
 const currentHash = h.digest("hex").slice(0, 16);
 
