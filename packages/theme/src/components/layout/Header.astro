@@ -1,6 +1,7 @@
 ---
 import ThemeToggle from "../ui/ThemeToggle.tsx";
 import TitleReveal from "../ui/TitleReveal.astro";
+import SearchTrigger from "../search/SearchTrigger.astro";
 import { loadThemeConfig } from "../../config/loader.ts";
 
 interface Props {
@@ -24,24 +25,28 @@ const logoAnim = config.features.animation && config.animation.apply_to.includes
       <TitleReveal text={title} as="span" enabled={logoAnim} />
     </a>
 
-    <!-- Desktop -->
-    <div class="hidden items-center gap-8 sm:flex">
-      <a href="/" class="text-[15px] font-medium transition-colors" style={`color: ${secondaryColor};`}>首页</a>
-      <a href="/tags" class="text-[15px] font-medium transition-colors" style={`color: ${secondaryColor};`}>标签</a>
-      <a href="/rss.xml" class="p-1 transition-colors" style={`color: ${secondaryColor};`} aria-label="RSS 订阅">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
-      </a>
-      <ThemeToggle client:load />
-    </div>
+    <div class="flex items-center gap-4">
+      <SearchTrigger variant={variant} />
 
-    <!-- Mobile -->
-    <div class="flex items-center gap-4 sm:hidden">
-      <ThemeToggle client:load />
-      <button id="mobile-menu-btn" aria-label="打开菜单" class="p-1" style={`color: ${secondaryColor};`}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
+      <!-- Desktop -->
+      <div class="hidden items-center gap-8 sm:flex">
+        <a href="/" class="text-[15px] font-medium transition-colors" style={`color: ${secondaryColor};`}>首页</a>
+        <a href="/tags" class="text-[15px] font-medium transition-colors" style={`color: ${secondaryColor};`}>标签</a>
+        <a href="/rss.xml" class="p-1 transition-colors" style={`color: ${secondaryColor};`} aria-label="RSS 订阅">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+        </a>
+        <ThemeToggle client:load />
+      </div>
+
+      <!-- Mobile -->
+      <div class="flex items-center gap-4 sm:hidden">
+        <ThemeToggle client:load />
+        <button id="mobile-menu-btn" aria-label="打开菜单" class="p-1" style={`color: ${secondaryColor};`}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
     </div>
   </nav>
 
