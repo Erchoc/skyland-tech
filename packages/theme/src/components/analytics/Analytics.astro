@@ -6,21 +6,30 @@ const { provider, site_id, script_src, host_url, respect_dnt } = config.analytic
 const active = provider === "umami" && site_id.length > 0;
 ---
 
-{active && respect_dnt && (
-  <script is:inline define:vars={{ scriptSrc: script_src, siteId: site_id, hostUrl: host_url }}>
+{active && (
+  <script is:inline define:vars={{ scriptSrc: script_src, siteId: site_id, hostUrl: host_url, respectDnt: respect_dnt }}>
+    // Umami 脚本推到 requestIdleCallback，让它不参与首屏 critical path。
+    // DNT 检测也在这里做——用户开 DNT 就不发任何请求。
     (function () {
-      var dnt = navigator.doNotTrack || window.doNotTrack;
-      if (dnt === "1" || dnt === "yes") return;
-      var s = document.createElement("script");
-      s.defer = true;
-      s.src = scriptSrc;
-      s.setAttribute("data-website-id", siteId);
-      if (hostUrl) s.setAttribute("data-host-url", hostUrl);
-      document.head.appendChild(s);
+      if (respectDnt) {
+        var dnt = navigator.doNotTrack || window.doNotTrack;
+        if (dnt === "1" || dnt === "yes") return;
+      }
+      function inject() {
+        var s = document.createElement("script");
+        s.defer = true;
+        s.src = scriptSrc;
+        s.setAttribute("data-website-id", siteId);
+        if (hostUrl) s.setAttribute("data-host-url", hostUrl);
+        document.head.appendChild(s);
+      }
+      // requestIdleCallback 在浏览器主线程空闲时跑；timeout 兜底保证最多 3s 内
+      // 一定会执行（即便用户疯狂滚动/交互永远没 idle）。老浏览器用 setTimeout。
+      if ("requestIdleCallback" in window) {
+        requestIdleCallback(inject, { timeout: 3000 });
+      } else {
+        setTimeout(inject, 1500);
+      }
     })();
   </script>
-)}
-
-{active && !respect_dnt && (
-  <script defer src={script_src} data-website-id={site_id} data-host-url={host_url || undefined}></script>
 )}
