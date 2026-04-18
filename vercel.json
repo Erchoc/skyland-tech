@@ -1,6 +1,6 @@
 {
   "framework": null,
-  "buildCommand": "if [ -f ./scripts/diag.sh ]; then sh ./scripts/diag.sh; elif [ -f ../scripts/diag.sh ]; then sh ../scripts/diag.sh; else echo \"__DIAG__ SCRIPT_NOT_FOUND PWD=$(pwd) FILES=[$(ls -A 2>/dev/null | tr '\\n' ' ')]\"; exit 1; fi",
+  "buildCommand": "pnpm --filter playground build && rm -rf ./dist && cp -r ./playground/dist ./dist",
   "outputDirectory": "dist",
   "installCommand": "pnpm install"
 }

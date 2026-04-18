@@ -86,16 +86,15 @@ description: "SEO 描述"
 ```json
 {
   "framework": null,
-  "buildCommand": "if [ ! -f ./pnpm-workspace.yaml ]; then cd ..; fi && pnpm --filter playground build && rm -rf ./dist && cp -r ./playground/dist ./dist",
+  "buildCommand": "pnpm --filter playground build && rm -rf ./dist && cp -r ./playground/dist ./dist",
   "outputDirectory": "dist",
   "installCommand": "pnpm install"
 }
 ```
 
-> 先用 `pnpm-workspace.yaml` 的存在与否识别 CWD，必要时 `cd ..` 锚定到仓库根；
-> build 产物在 `playground/dist`，再 `cp -r` 一份到仓库根 `dist/`。
-> 这样无论 Vercel 在哪（Dashboard override、Root Directory 设置等）找 `dist`，
-> 仓库根和 playground 都有产物——双保险兜底。
+> **Vercel Project Settings 必须同步**：Root Directory 留空或填 `.`（不要填
+> 子包路径如 `packages/theme`、`playground`，否则 shell CWD 和 output 搜索
+> 基准都会偏掉，导致 buildCommand 指不到正确文件）。
 
 首次部署后建议：
 
