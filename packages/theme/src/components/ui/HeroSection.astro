@@ -1,10 +1,15 @@
 ---
+import TitleReveal from "./TitleReveal.astro";
+import { loadThemeConfig } from "../../config/loader.ts";
+
 interface Props {
   title: string;
   description: string;
 }
 
 const { title, description } = Astro.props;
+const config = loadThemeConfig();
+const enabled = config.features.animation && config.animation.apply_to.includes("hero");
 ---
 
 <section class="relative overflow-hidden" style="background-color: var(--color-dark-bg);">
@@ -14,19 +19,13 @@ const { title, description } = Astro.props;
   <div class="relative mx-auto max-w-[1150px] px-6 py-20 sm:py-28 lg:px-8 lg:py-36">
     <p class="label-uppercase" style="color: var(--color-text-helper);">技术 · 架构 · 工程</p>
 
-    <h1
+    <TitleReveal
+      text={title}
+      as="h1"
       class="mt-4 max-w-3xl tracking-tight"
-      style={`
-        font-family: var(--font-heading);
-        font-feature-settings: "kern" 1;
-        font-weight: 600;
-        font-size: clamp(2.625rem, 5vw + 1rem, 5.125rem);
-        line-height: 1.17;
-        color: var(--color-dark-text);
-      `}
-    >
-      {title}
-    </h1>
+      style={`font-family: var(--font-heading); font-feature-settings: "kern" 1; font-weight: 600; font-size: clamp(2.625rem, 5vw + 1rem, 5.125rem); line-height: 1.17; color: var(--color-dark-text);`}
+      enabled={enabled}
+    />
 
     <p
       class="mt-6 max-w-xl"
