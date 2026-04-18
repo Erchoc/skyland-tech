@@ -16,6 +16,7 @@ export default function ThemeToggle() {
 
   return (
     <button
+      type="button"
       onClick={toggle}
       aria-label="切换主题"
       style={{
@@ -31,6 +32,7 @@ export default function ThemeToggle() {
       {dark ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
           width="18"
           height="18"
           viewBox="0 0 24 24"
@@ -53,6 +55,7 @@ export default function ThemeToggle() {
       ) : (
         <svg
           xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
           width="18"
           height="18"
           viewBox="0 0 24 24"

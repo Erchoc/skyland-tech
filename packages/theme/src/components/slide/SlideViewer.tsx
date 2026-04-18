@@ -109,6 +109,7 @@ export default function SlideViewer({ content, title }: Props) {
             color: "#efeff1",
             animation: "slideIn 0.3s ease",
           }}
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: 幻灯片片段来自 MDX 编译产物，是 trusted 本站内容，安全
           dangerouslySetInnerHTML={{ __html: allSlides[current] }}
         />
       </div>
@@ -127,6 +128,7 @@ export default function SlideViewer({ content, title }: Props) {
       >
         <div style={{ display: "flex", gap: "16px" }}>
           <button
+            type="button"
             onClick={prev}
             disabled={current === 0}
             style={{
@@ -141,6 +143,7 @@ export default function SlideViewer({ content, title }: Props) {
             ← Prev
           </button>
           <button
+            type="button"
             onClick={next}
             disabled={current === total - 1}
             style={{

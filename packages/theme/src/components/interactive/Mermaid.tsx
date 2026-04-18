@@ -89,6 +89,7 @@ export default function Mermaid({ chart }: Props) {
         justifyContent: "center",
         overflow: "auto",
       }}
+      // biome-ignore lint/security/noDangerouslySetInnerHtml: mermaid 渲染器输出的 SVG 字符串，必须通过 innerHTML 挂载；SVG 来源是 mermaid 编译 trusted markdown，无 XSS 风险
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   );

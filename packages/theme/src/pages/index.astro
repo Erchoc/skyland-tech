@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import type { ImageMetadata } from "astro";
 import Footer from "../components/layout/Footer.astro";
 import Header from "../components/layout/Header.astro";
 import HeroSection from "../components/ui/HeroSection.astro";
@@ -22,7 +23,7 @@ type SimplePost = {
     description: string;
     date: Date;
     tags: string[];
-    cover?: any;
+    cover?: ImageMetadata;
     draft: boolean;
   };
   body?: string;

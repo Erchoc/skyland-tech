@@ -1,5 +1,7 @@
 ---
+import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
+import type { ImageMetadata } from "astro";
 import Footer from "../../components/layout/Footer.astro";
 import Header from "../../components/layout/Header.astro";
 import PostCard from "../../components/ui/PostCard.astro";
@@ -13,7 +15,7 @@ type CardData = {
   description: string;
   date: Date;
   tags: string[];
-  cover?: any;
+  cover?: ImageMetadata;
   readingTime: string;
 };
 
@@ -25,7 +27,7 @@ export async function getStaticPaths() {
     (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
   );
 
-  const toCard = (p: { id: string; data: any; body?: string }): CardData => ({
+  const toCard = (p: CollectionEntry<"posts">): CardData => ({
     id: p.id,
     title: p.data.title,
     description: p.data.description,
