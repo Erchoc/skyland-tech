@@ -1,5 +1,6 @@
 ---
 import type { ImageMetadata, MarkdownHeading } from "astro";
+import RelatedPosts from "../components/article/RelatedPosts.astro";
 import TableOfContents from "../components/article/TableOfContents.astro";
 import Footer from "../components/layout/Footer.astro";
 import Header from "../components/layout/Header.astro";
@@ -144,6 +145,8 @@ const subtitleEnabled =
           <div class="article-prose">
             <slot />
           </div>
+
+          <RelatedPosts slug={slug} tags={tags} series={series} />
 
           {/* Series nav */}
           {(prevPost || nextPost) && (

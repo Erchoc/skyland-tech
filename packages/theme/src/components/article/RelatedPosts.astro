@@ -1,0 +1,90 @@
+---
+import { getCollection } from "astro:content";
+
+interface Props {
+  slug: string;
+  tags: string[];
+  series?: string;
+}
+
+const { slug, tags, series } = Astro.props;
+
+const all = (await getCollection("posts", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+type Scored = { entry: (typeof all)[number]; score: number };
+
+const currentTags = new Set(tags);
+
+const scored: Scored[] = all
+  .filter((p) => p.id !== slug)
+  .map((p) => {
+    let score = 0;
+    if (series && p.data.series === series) score += 10;
+    for (const t of p.data.tags) {
+      if (currentTags.has(t)) score += 1;
+    }
+    return { entry: p, score };
+  });
+
+const ranked = scored
+  .filter((s) => s.score > 0)
+  .sort((a, b) => b.score - a.score || b.entry.data.date.valueOf() - a.entry.data.date.valueOf());
+
+// Pad with latest if fewer than 3
+const selectedIds = new Set(ranked.slice(0, 3).map((s) => s.entry.id));
+const padded = [
+  ...ranked.slice(0, 3).map((s) => s.entry),
+  ...all
+    .filter((p) => p.id !== slug && !selectedIds.has(p.id))
+    .slice(0, Math.max(0, 3 - ranked.length)),
+].slice(0, 3);
+
+const hasResults = padded.length > 0;
+---
+
+{
+  hasResults && (
+    <section class="mt-16 pt-8" style="border-top: 1px solid var(--border);">
+      <p class="label-uppercase mb-4" style="color: var(--text-helper);">
+        相关文章
+      </p>
+      <div class="grid gap-4 sm:grid-cols-3">
+        {padded.map((p) => (
+          <a
+            href={`/posts/${p.id}`}
+            class="group block p-4 transition-colors"
+            style="border: 1px solid var(--border); border-radius: var(--radius-lg); text-decoration: none;"
+          >
+            <time
+              class="text-[12px] tabular-nums"
+              style="color: var(--text-helper);"
+              datetime={p.data.date.toISOString()}
+            >
+              {p.data.date.toLocaleDateString("zh-CN", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </time>
+            <p
+              class="mt-2 text-[14px] font-medium leading-snug"
+              style="color: var(--text);"
+            >
+              {p.data.title}
+            </p>
+            {p.data.series && (
+              <p
+                class="mt-2 text-[11px] label-uppercase"
+                style="color: var(--color-accent);"
+              >
+                {p.data.series}
+              </p>
+            )}
+          </a>
+        ))}
+      </div>
+    </section>
+  )
+}
