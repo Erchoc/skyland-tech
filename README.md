@@ -86,16 +86,16 @@ description: "SEO 描述"
 ```json
 {
   "framework": null,
-  "buildCommand": "pnpm --filter playground build && if [ -d ./playground/dist ]; then rm -rf ./dist && mv ./playground/dist ./dist; fi",
+  "buildCommand": "if [ ! -f ./pnpm-workspace.yaml ]; then cd ..; fi && pnpm --filter playground build && rm -rf ./dist && cp -r ./playground/dist ./dist",
   "outputDirectory": "dist",
   "installCommand": "pnpm install"
 }
 ```
 
-> buildCommand 做到 CWD-agnostic：若 Vercel Root Directory 是仓库根，
-> astro 产物在 `./playground/dist` → mv 搬到 `./dist`；若 Root Directory
-> 是 `playground`，astro 产物直接就是 `./dist`，if 条件不成立跳过 mv。
-> 两种情况下 outputDirectory=`dist` 都能 match 上。
+> 先用 `pnpm-workspace.yaml` 的存在与否识别 CWD，必要时 `cd ..` 锚定到仓库根；
+> build 产物在 `playground/dist`，再 `cp -r` 一份到仓库根 `dist/`。
+> 这样无论 Vercel 在哪（Dashboard override、Root Directory 设置等）找 `dist`，
+> 仓库根和 playground 都有产物——双保险兜底。
 
 首次部署后建议：
 

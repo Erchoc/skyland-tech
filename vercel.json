@@ -1,6 +1,6 @@
 {
   "framework": null,
-  "buildCommand": "pnpm --filter playground build && if [ -d ./playground/dist ]; then rm -rf ./dist && mv ./playground/dist ./dist; fi",
+  "buildCommand": "if [ ! -f ./pnpm-workspace.yaml ]; then cd ..; fi && pnpm --filter playground build && rm -rf ./dist && cp -r ./playground/dist ./dist",
   "outputDirectory": "dist",
   "installCommand": "pnpm install"
 }
