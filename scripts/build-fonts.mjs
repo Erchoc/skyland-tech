@@ -57,6 +57,25 @@ async function main() {
   const final = buildCharset(strategy, scanned, baseline);
   const text = [...final].join("");
 
+  const charsetHash = createHash("sha256").update(text).digest("hex").slice(0, 16);
+  const scanHash = hashFiles(scanGlobs);
+
+  // subset-font 不是字节确定的——charset 没变时，重新产物只会在无意义的元数据上漂移。
+  // 此处若 charsetHash 与旧产物一致则跳过 subsetFont 与 TARGET 写入，仅在 scanHash 漂移时
+  // 刷新 .meta.json 以满足 check-fonts.mjs 的 prebuild 校验。
+  if (existsSync(TARGET) && existsSync(META)) {
+    const oldMeta = JSON.parse(readFileSync(META, "utf8"));
+    if (oldMeta.charsetHash === charsetHash) {
+      if (oldMeta.scanHash !== scanHash) {
+        writeFileSync(META, `${JSON.stringify({ ...oldMeta, scanHash }, null, 2)}\n`);
+        console.log("✓ charset 未变，仅刷新 .meta.json 的 scanHash");
+      } else {
+        console.log("✓ charset 与 scan 源均未变，跳过");
+      }
+      return;
+    }
+  }
+
   const source = readFileSync(SOURCE);
   console.log(
     `→ subset-font: ${final.size} chars, source ${(source.length / 1024 / 1024).toFixed(2)} MB`,
@@ -69,8 +88,8 @@ async function main() {
     bytes: subset.length,
     scannedChars: scanned.size,
     baselineChars: baseline.size,
-    scanHash: hashFiles(scanGlobs),
-    charsetHash: createHash("sha256").update(text).digest("hex").slice(0, 16),
+    scanHash,
+    charsetHash,
     unicodeRange: toUnicodeRange(final),
     strategy,
     builtAt: new Date().toISOString(),
