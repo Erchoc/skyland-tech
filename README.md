@@ -8,10 +8,13 @@
 
 - **内容**：MDX + Frontmatter，内嵌 Mermaid 图表、medium-zoom 图片放大、Slidev 风演讲模式
 - **PWA**：Workbox runtime caching，HTML / 字体 / 静态资源分层缓存策略
+- **搜索**：Pagefind 全文搜索 + ⌘K 模态，CJK 原生分词
 - **SEO**：自动 `sitemap.xml`、RSS feed
-- **中文排版**：霞鹜文楷 Lite (LXGW WenKai) 本地字体 + preload 消减 FOUT
+- **中文排版**：霞鹜文楷 Lite（LXGW WenKai）本地字体，subset 到 ~812 KB，unicode-range 兜底
+- **动效**：标题逐字上浮进场（可配置 variant / 关闭 / 尊重 `prefers-reduced-motion`）
 - **移动端**：点击反馈、分页/卡片触感优化、maskable PWA icon
-- **工程化**：pnpm 10 monorepo、Biome 代码检查、GitHub Actions CI
+- **工程化**：pnpm 10 monorepo、Biome 代码检查、Vitest 单测、GitHub Actions CI
+- **配置**：`config.toml` + JSON Schema 语言中立契约（预留未来 Rust CLI + WebUI）
 
 ## 技术栈
 
@@ -36,6 +39,8 @@ pnpm build     # 产物输出到 playground/dist
 pnpm start     # 本地预览产物
 pnpm lint      # Biome 检查
 pnpm lint:fix  # Biome 自动修复
+pnpm test      # Vitest 单元测试
+pnpm fonts:build   # 字体子集化（新增文章用到罕用字后需重跑）
 ```
 
 ## 目录结构
@@ -55,6 +60,18 @@ pnpm lint:fix  # Biome 自动修复
 ├── TODO.md           # 路线图 + 技术债
 └── vercel.json
 ```
+
+## 配置
+
+站点通过 `playground/config.toml` 配置，字段 schema 见 [`docs/config.schema.md`](./docs/config.schema.md) 和机器可读的 [`schema/config.schema.json`](./schema/config.schema.json)。
+
+`config.toml` 未来将由 CLI（Rust）+ WebUI 运营后台生成。当前手写编辑。支持的可配置能力：
+
+- 站点基本信息（标题 / 描述 / 作者 / URL）
+- 功能开关（`features.pwa` / `search` / `rss` / `slides` / `animation`）
+- 动画变体与应用位置（`animation.variant` / `apply_to` / `duration` / `stagger`）
+- 搜索引擎选型与权重（`search.engine` / `shortcut` / `weights`）
+- 字体子集策略与扫描范围（`fonts.subset_strategy` / `scan_globs` / `baseline_charset`）
 
 ## 写一篇新文章
 
