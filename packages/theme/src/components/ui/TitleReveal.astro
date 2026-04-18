@@ -1,0 +1,53 @@
+---
+// packages/theme/src/components/ui/TitleReveal.astro
+import { loadThemeConfig } from "../../config/loader.ts";
+import type { AnimationVariant } from "../../config/schema.ts";
+
+interface Props {
+  text: string;
+  as?: string;
+  variant?: AnimationVariant;
+  delay?: number;
+  duration?: number;
+  stagger?: number;
+  class?: string;
+  style?: string;
+  enabled?: boolean;
+}
+
+const config = loadThemeConfig();
+const {
+  text,
+  as: Tag = "span",
+  variant = config.animation.variant,
+  delay = 0,
+  duration = config.animation.duration,
+  stagger = config.animation.stagger,
+  class: className,
+  style,
+  enabled = config.features.animation,
+} = Astro.props;
+
+const active = enabled && variant !== "none";
+const chars = active ? [...text] : null;
+const forceOff = config.animation.reduced_motion === "force-off";
+---
+
+{active ? (
+  <Tag
+    class:list={["title-reveal", `variant-${variant}`, forceOff && "no-reduce-motion", className]}
+    data-delay={delay}
+    data-duration={duration}
+    data-stagger={stagger}
+    data-variant={variant}
+    style={style}
+  >
+    {(variant === "wipe" || variant === "typewriter") ? (
+      <span class="tr-wrap">{text}</span>
+    ) : (
+      chars!.map((ch, i) => <span class="tr-ch" style={`--i:${i}`}>{ch}</span>)
+    )}
+  </Tag>
+) : (
+  <Tag class={className} style={style}>{text}</Tag>
+)}
