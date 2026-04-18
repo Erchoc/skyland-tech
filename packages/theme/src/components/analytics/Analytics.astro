@@ -1,0 +1,25 @@
+---
+import { loadThemeConfig } from "../../config/loader.ts";
+
+const config = loadThemeConfig();
+const { provider, site_id, script_src, respect_dnt } = config.analytics;
+const active = provider === "umami" && site_id.length > 0;
+---
+
+{active && respect_dnt && (
+  <script is:inline define:vars={{ scriptSrc: script_src, siteId: site_id }}>
+    (function () {
+      var dnt = navigator.doNotTrack || window.doNotTrack;
+      if (dnt === "1" || dnt === "yes") return;
+      var s = document.createElement("script");
+      s.defer = true;
+      s.src = scriptSrc;
+      s.setAttribute("data-website-id", siteId);
+      document.head.appendChild(s);
+    })();
+  </script>
+)}
+
+{active && !respect_dnt && (
+  <script defer src={script_src} data-website-id={site_id}></script>
+)}
