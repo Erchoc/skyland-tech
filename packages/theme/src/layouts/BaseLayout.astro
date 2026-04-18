@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import lxgwWenKaiFontUrl from "../styles/fonts/LXGWWenKaiLite-Regular.woff2?url";
+import { loadThemeConfig } from "../config/loader.ts";
 
 interface Props {
   title: string;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 const { title, description = "", darkHero = false } = Astro.props;
+const config = loadThemeConfig();
 ---
 
 <!doctype html>
@@ -21,7 +23,9 @@ const { title, description = "", darkHero = false } = Astro.props;
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     {/* crossorigin 必填：@font-face 是匿名 CORS 请求，不加则 preload 被视为不同资源 → 双次下载 */}
-    <link rel="preload" href={lxgwWenKaiFontUrl} as="font" type="font/woff2" crossorigin />
+    {config.fonts.preload && (
+      <link rel="preload" href={lxgwWenKaiFontUrl} as="font" type="font/woff2" crossorigin />
+    )}
     <title>{title}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
