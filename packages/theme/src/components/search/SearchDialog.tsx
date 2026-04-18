@@ -16,12 +16,14 @@ export function SearchDialog({ shortcut, placeholder, trackSearch }: Props) {
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<Element | null>(null);
+  const lastTrackedRef = useRef<string>("");
   const { results, loading, unavailable } = usePagefind(open ? query : "");
 
   const close = useCallback(() => {
     setOpen(false);
     setQuery("");
     setActive(0);
+    lastTrackedRef.current = "";
     (triggerRef.current as HTMLElement | null)?.focus();
   }, []);
 
@@ -69,11 +71,20 @@ export function SearchDialog({ shortcut, placeholder, trackSearch }: Props) {
     setActive(0);
   }, [query]);
 
+  // 搜索上报独立防抖：query 每变就重置 1.5s 计时；配合 lastTrackedRef 去重，
+  // 同一次 dialog 开启期间同一 query 只 track 一次。这样拼音中间态（gong /
+  // gong'cheng / 工程）不会被全量采集，只留最终稳定值。
   useEffect(() => {
-    if (!trackSearch || !open || query.length < 2 || loading) return;
-    if (typeof window.umami?.track !== "function") return;
-    window.umami.track("search", { query, results: results.length });
-  }, [trackSearch, open, query, loading, results.length]);
+    if (!trackSearch || !open || query.length < 2) return;
+    if (lastTrackedRef.current === query) return;
+    const handle = window.setTimeout(() => {
+      if (typeof window.umami?.track === "function") {
+        window.umami.track("search", { query, results: results.length });
+        lastTrackedRef.current = query;
+      }
+    }, 1500);
+    return () => window.clearTimeout(handle);
+  }, [trackSearch, open, query, results.length]);
 
   if (!open) return null;
 
