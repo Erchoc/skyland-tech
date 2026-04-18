@@ -1,5 +1,7 @@
 ---
 import ThemeToggle from "../ui/ThemeToggle.tsx";
+import TitleReveal from "../ui/TitleReveal.astro";
+import { loadThemeConfig } from "../../config/loader.ts";
 
 interface Props {
   title: string;
@@ -12,16 +14,14 @@ const bg = isDark ? "var(--color-dark-bg)" : "var(--bg)";
 const textColor = isDark ? "var(--color-dark-text)" : "var(--text)";
 const secondaryColor = isDark ? "var(--color-dark-text-secondary)" : "var(--text-secondary)";
 const borderColor = isDark ? "rgba(97, 104, 117, 0.3)" : "var(--border)";
+const config = loadThemeConfig();
+const logoAnim = config.features.animation && config.animation.apply_to.includes("nav-logo");
 ---
 
 <header class="sticky top-0 z-50" style={`background-color: ${bg}; border-bottom: 1px solid ${borderColor};`}>
   <nav class="mx-auto flex max-w-[1150px] items-center justify-between px-6 py-3 lg:px-8">
-    <a
-      href="/"
-      class="text-[1.19rem] font-bold tracking-tight"
-      style={`color: ${textColor}; font-family: var(--font-heading); font-feature-settings: "kern" 1;`}
-    >
-      {title}
+    <a href="/" class="text-[1.19rem] font-bold tracking-tight" style={`color: ${textColor}; font-family: var(--font-heading); font-feature-settings: "kern" 1;`}>
+      <TitleReveal text={title} as="span" enabled={logoAnim} />
     </a>
 
     <!-- Desktop -->
