@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tech.longye.site/schema/config.schema.json",
+  "title": "ThemeConfig",
+  "type": "object",
+  "properties": {
+    "site": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "author": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "lang": { "type": "string", "default": "zh-CN" }
+      },
+      "required": ["title", "url"]
+    },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "color": { "type": "string" },
+        "dark": { "type": "boolean", "default": true },
+        "layout": { "type": "string", "default": "magazine" }
+      }
+    },
+    "social": { "type": "object", "additionalProperties": { "type": "string" } },
+    "categories": {
+      "type": "object",
+      "properties": {
+        "list": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "features": {
+      "type": "object",
+      "properties": {
+        "pwa": { "type": "boolean", "default": true },
+        "slides": { "type": "boolean", "default": true },
+        "search": { "type": "boolean", "default": true },
+        "rss": { "type": "boolean", "default": true },
+        "animation": { "type": "boolean", "default": true }
+      }
+    },
+    "animation": {
+      "type": "object",
+      "properties": {
+        "variant": {
+          "type": "string",
+          "enum": ["slide-up", "fade", "wipe", "typewriter", "none"],
+          "default": "slide-up"
+        },
+        "duration": { "type": "integer", "minimum": 0, "default": 550 },
+        "stagger": { "type": "integer", "minimum": 0, "default": 100 },
+        "apply_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["hero", "article-title", "article-subtitle", "nav-logo"]
+          },
+          "default": ["hero", "article-title", "article-subtitle", "nav-logo"]
+        },
+        "reduced_motion": {
+          "type": "string",
+          "enum": ["respect", "force-off"],
+          "default": "respect"
+        }
+      }
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "engine": { "type": "string", "enum": ["pagefind", "none"], "default": "pagefind" },
+        "shortcut": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
+          "default": "mod+k"
+        },
+        "placeholder": { "type": "string", "default": "搜索文章..." },
+        "weights": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "number", "default": 10 },
+            "tags": { "type": "number", "default": 5 },
+            "body": { "type": "number", "default": 1 }
+          }
+        }
+      }
+    },
+    "fonts": {
+      "type": "object",
+      "properties": {
+        "subset_strategy": {
+          "type": "string",
+          "enum": ["scan", "baseline", "hybrid"],
+          "default": "hybrid"
+        },
+        "baseline_charset": { "type": "string", "default": "cjk-3500" },
+        "scan_globs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["playground/posts/**/*.mdx", "packages/theme/src/**/*.{astro,tsx,ts}"]
+        },
+        "preload": { "type": "boolean", "default": true }
+      }
+    }
+  }
+}
