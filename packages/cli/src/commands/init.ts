@@ -1,6 +1,6 @@
-import { defineCommand } from "citty";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { defineCommand } from "citty";
 import consola from "consola";
 
 const defaultConfig = `[site]
@@ -28,20 +28,25 @@ search = true
 rss = true
 `;
 
-const defaultPackageJson = (name: string) => JSON.stringify({
-  name,
-  private: true,
-  type: "module",
-  scripts: {
-    dev: "pkg dev",
-    build: "pkg build",
-    start: "pkg start",
-  },
-  dependencies: {
-    "@pkg/cli": "latest",
-    "@pkg/theme": "latest",
-  },
-}, null, 2);
+const defaultPackageJson = (name: string) =>
+  JSON.stringify(
+    {
+      name,
+      private: true,
+      type: "module",
+      scripts: {
+        dev: "pkg dev",
+        build: "pkg build",
+        start: "pkg start",
+      },
+      dependencies: {
+        "@pkg/cli": "latest",
+        "@pkg/theme": "latest",
+      },
+    },
+    null,
+    2,
+  );
 
 export const initCommand = defineCommand({
   meta: { name: "init", description: "Initialize a new project" },

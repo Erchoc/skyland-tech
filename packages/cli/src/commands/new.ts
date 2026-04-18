@@ -1,6 +1,6 @@
-import { defineCommand } from "citty";
-import { mkdirSync, writeFileSync, existsSync, readdirSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { defineCommand } from "citty";
 import consola from "consola";
 
 export const newCommand = defineCommand({
@@ -46,7 +46,7 @@ description: ""
 
     writeFileSync(resolve(postDir, "index.mdx"), frontmatter);
     consola.success(`Created: posts/${dirName}/`);
-    consola.info(`  ├── index.mdx`);
-    consola.info(`  └── assets/`);
+    consola.info("  ├── index.mdx");
+    consola.info("  └── assets/");
   },
 });

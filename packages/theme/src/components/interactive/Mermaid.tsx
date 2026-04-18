@@ -56,7 +56,9 @@ export default function Mermaid({ chart }: Props) {
     }
 
     renderChart();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [chart]);
 
   if (error) {

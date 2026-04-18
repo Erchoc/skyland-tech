@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface Props {
   content: string;
@@ -24,10 +24,7 @@ export default function SlideViewer({ content, title }: Props) {
 
   const total = allSlides.length;
 
-  const goTo = useCallback(
-    (n: number) => setCurrent(Math.max(0, Math.min(n, total - 1))),
-    [total],
-  );
+  const goTo = useCallback((n: number) => setCurrent(Math.max(0, Math.min(n, total - 1))), [total]);
   const next = useCallback(() => goTo(current + 1), [current, goTo]);
   const prev = useCallback(() => goTo(current - 1), [current, goTo]);
 

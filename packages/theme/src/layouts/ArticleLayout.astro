@@ -1,12 +1,12 @@
 ---
-import BaseLayout from "./BaseLayout.astro";
-import Header from "../components/layout/Header.astro";
-import Footer from "../components/layout/Footer.astro";
+import type { ImageMetadata, MarkdownHeading } from "astro";
 import TableOfContents from "../components/article/TableOfContents.astro";
+import Footer from "../components/layout/Footer.astro";
+import Header from "../components/layout/Header.astro";
 import TitleReveal from "../components/ui/TitleReveal.astro";
 import { loadThemeConfig } from "../config/loader.ts";
 import { tagToSlug } from "../utils/tag-slug.ts";
-import type { MarkdownHeading, ImageMetadata } from "astro";
+import BaseLayout from "./BaseLayout.astro";
 
 interface Props {
   title: string;
@@ -26,20 +26,38 @@ interface Props {
 }
 
 const {
-  title, subtitle, description, date, updatedDate, author, cover,
-  tags, readingTime, headings, series, slug, prevPost, nextPost,
+  title,
+  subtitle,
+  description,
+  date,
+  updatedDate,
+  author,
+  cover,
+  tags,
+  readingTime,
+  headings,
+  series,
+  slug,
+  prevPost,
+  nextPost,
 } = Astro.props;
 
 const formattedDate = date.toLocaleDateString("zh-CN", {
-  year: "numeric", month: "long", day: "numeric",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
 });
 const formattedUpdated = updatedDate?.toLocaleDateString("zh-CN", {
-  year: "numeric", month: "long", day: "numeric",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
 });
 const config = loadThemeConfig();
 const weights = config.search.weights;
-const titleEnabled = config.features.animation && config.animation.apply_to.includes("article-title");
-const subtitleEnabled = config.features.animation && config.animation.apply_to.includes("article-subtitle");
+const titleEnabled =
+  config.features.animation && config.animation.apply_to.includes("article-title");
+const subtitleEnabled =
+  config.features.animation && config.animation.apply_to.includes("article-subtitle");
 ---
 
 <BaseLayout title={`${title} — 空岛云技术`} description={description}>

@@ -1,6 +1,6 @@
 import { defineCommand } from "citty";
-import { execa } from "execa";
 import consola from "consola";
+import { execa } from "execa";
 
 export const startCommand = defineCommand({
   meta: { name: "start", description: "Preview production build" },

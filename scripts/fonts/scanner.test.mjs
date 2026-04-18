@@ -1,9 +1,9 @@
-// scripts/fonts/scanner.test.mjs
-import { describe, it, expect } from "vitest";
-import { extractChars, extractFromFiles } from "./scanner.mjs";
-import { writeFileSync, mkdtempSync, rmSync } from "node:fs";
-import { join } from "node:path";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
+import { join } from "node:path";
+// scripts/fonts/scanner.test.mjs
+import { describe, expect, it } from "vitest";
+import { extractChars, extractFromFiles } from "./scanner.mjs";
 
 describe("extractChars", () => {
   it("提取 CJK 字符", () => {

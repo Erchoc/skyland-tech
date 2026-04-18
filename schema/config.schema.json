@@ -70,10 +70,7 @@
       "properties": {
         "engine": { "type": "string", "enum": ["pagefind", "none"], "default": "pagefind" },
         "shortcut": {
-          "oneOf": [
-            { "type": "string" },
-            { "type": "array", "items": { "type": "string" } }
-          ],
+          "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }],
           "default": "mod+k"
         },
         "placeholder": { "type": "string", "default": "搜索文章..." },

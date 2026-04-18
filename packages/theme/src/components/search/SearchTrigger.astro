@@ -1,11 +1,13 @@
 ---
-import { SearchDialog } from "./SearchDialog.tsx";
 import { loadThemeConfig } from "../../config/loader.ts";
+import { SearchDialog } from "./SearchDialog.tsx";
 
 const config = loadThemeConfig();
 const enabled = config.features.search && config.search.engine !== "none";
 
-interface Props { variant?: "light" | "dark"; }
+interface Props {
+  variant?: "light" | "dark";
+}
 const { variant = "dark" } = Astro.props;
 const color = variant === "dark" ? "#9ca3af" : "#656a76";
 ---

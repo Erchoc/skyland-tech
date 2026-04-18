@@ -1,18 +1,19 @@
 ---
 import { getCollection } from "astro:content";
-import BaseLayout from "../layouts/BaseLayout.astro";
-import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
+import Header from "../components/layout/Header.astro";
 import HeroSection from "../components/ui/HeroSection.astro";
 import PostCard from "../components/ui/PostCard.astro";
-import { getReadingTime } from "../utils/reading-time.ts";
+import BaseLayout from "../layouts/BaseLayout.astro";
 import { buildPaginationItems, pageUrl } from "../utils/pagination.ts";
+import { getReadingTime } from "../utils/reading-time.ts";
 
 const POSTS_PER_PAGE = 12;
 const mockPage = import.meta.env.MOCK_POSTS === "1";
 
-const realPosts = (await getCollection("posts", ({ data }) => !data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const realPosts = (await getCollection("posts", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
 
 type SimplePost = {
   id: string;
@@ -29,12 +30,30 @@ type SimplePost = {
 
 let allPosts: SimplePost[] = realPosts.map((p) => ({
   id: p.id,
-  data: { title: p.data.title, description: p.data.description, date: p.data.date, tags: p.data.tags, cover: p.data.cover, draft: false },
+  data: {
+    title: p.data.title,
+    description: p.data.description,
+    date: p.data.date,
+    tags: p.data.tags,
+    cover: p.data.cover,
+    draft: false,
+  },
   body: p.body,
 }));
 
 if (mockPage) {
-  const tags = ["Kubernetes", "Docker", "Node.js", "性能优化", "架构设计", "云原生", "微服务", "CI/CD", "监控", "安全"];
+  const tags = [
+    "Kubernetes",
+    "Docker",
+    "Node.js",
+    "性能优化",
+    "架构设计",
+    "云原生",
+    "微服务",
+    "CI/CD",
+    "监控",
+    "安全",
+  ];
   const categories = ["架构设计", "工程实践", "性能优化", "基础设施"];
   allPosts = Array.from({ length: 100 }, (_, i) => {
     const base = realPosts[i % realPosts.length];

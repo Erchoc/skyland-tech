@@ -1,13 +1,13 @@
-import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
-import AstroPWA from "@vite-pwa/astro";
-import tailwindcss from "@tailwindcss/vite";
-import { injectThemePages } from "@pkg/theme/integrations/inject-pages";
 import { loadThemeConfig } from "@pkg/theme/config/loader";
+import { injectThemePages } from "@pkg/theme/integrations/inject-pages";
 import { isSearchEnabled } from "@pkg/theme/integrations/search";
+import tailwindcss from "@tailwindcss/vite";
+import AstroPWA from "@vite-pwa/astro";
 import pagefind from "astro-pagefind";
+import { defineConfig } from "astro/config";
 
 const themeConfig = loadThemeConfig();
 

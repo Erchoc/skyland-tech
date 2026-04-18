@@ -1,5 +1,5 @@
 // scripts/build-fonts.test.mjs
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { buildCharset } from "./build-fonts.mjs";
 
 describe("buildCharset", () => {

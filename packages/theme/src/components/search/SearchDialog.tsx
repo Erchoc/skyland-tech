@@ -1,8 +1,8 @@
 // packages/theme/src/components/search/SearchDialog.tsx
-import { useEffect, useRef, useState, useCallback } from "react";
-import { usePagefind } from "./use-pagefind.ts";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { matchShortcut, parseShortcut } from "../../config/shortcut.ts";
 import { SearchResult } from "./SearchResult.tsx";
-import { parseShortcut, matchShortcut } from "../../config/shortcut.ts";
+import { usePagefind } from "./use-pagefind.ts";
 
 interface Props {
   shortcut: string | string[];
@@ -34,10 +34,16 @@ export function SearchDialog({ shortcut, placeholder }: Props) {
         return;
       }
       if (!open) return;
-      if (e.key === "Escape") { e.preventDefault(); close(); }
-      else if (e.key === "ArrowDown") { e.preventDefault(); setActive(i => Math.min(i + 1, results.length - 1)); }
-      else if (e.key === "ArrowUp") { e.preventDefault(); setActive(i => Math.max(i - 1, 0)); }
-      else if (e.key === "Enter" && results[active]) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        close();
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActive((i) => Math.min(i + 1, results.length - 1));
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActive((i) => Math.max(i - 1, 0));
+      } else if (e.key === "Enter" && results[active]) {
         e.preventDefault();
         window.location.href = results[active].url;
       }
@@ -58,7 +64,9 @@ export function SearchDialog({ shortcut, placeholder }: Props) {
     if (open) setTimeout(() => inputRef.current?.focus(), 10);
   }, [open]);
 
-  useEffect(() => { setActive(0); }, [query]);
+  useEffect(() => {
+    setActive(0);
+  }, [query]);
 
   if (!open) return null;
 
@@ -73,16 +81,24 @@ export function SearchDialog({ shortcut, placeholder }: Props) {
     >
       <div
         className="w-full max-w-[560px] rounded-xl overflow-hidden"
-        style={{ background: "#161b22", border: "1px solid rgba(255,255,255,0.12)", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}
-        onClick={e => e.stopPropagation()}
+        style={{
+          background: "#161b22",
+          border: "1px solid rgba(255,255,255,0.12)",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+        }}
+        onClick={(e) => e.stopPropagation()}
       >
         <input
           ref={inputRef}
           value={query}
-          onChange={e => setQuery(e.target.value)}
+          onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
           className="w-full px-4 py-3.5 text-[15px] outline-none"
-          style={{ background: "transparent", color: "var(--color-dark-text)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+          style={{
+            background: "transparent",
+            color: "var(--color-dark-text)",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+          }}
           disabled={unavailable}
         />
         <ul role="listbox" className="max-h-[50vh] overflow-y-auto">
@@ -92,13 +108,19 @@ export function SearchDialog({ shortcut, placeholder }: Props) {
             </li>
           )}
           {!unavailable && query.length < 2 && (
-            <li className="px-4 py-6 text-[13px]" style={{ color: "#94a3b8" }}>请输入 2 个或更多字符</li>
+            <li className="px-4 py-6 text-[13px]" style={{ color: "#94a3b8" }}>
+              请输入 2 个或更多字符
+            </li>
           )}
           {!unavailable && query.length >= 2 && loading && (
-            <li className="px-4 py-6 text-[13px]" style={{ color: "#94a3b8" }}>搜索中...</li>
+            <li className="px-4 py-6 text-[13px]" style={{ color: "#94a3b8" }}>
+              搜索中...
+            </li>
           )}
           {!unavailable && query.length >= 2 && !loading && results.length === 0 && (
-            <li className="px-4 py-6 text-[13px]" style={{ color: "#94a3b8" }}>未找到「{query}」相关文章</li>
+            <li className="px-4 py-6 text-[13px]" style={{ color: "#94a3b8" }}>
+              未找到「{query}」相关文章
+            </li>
           )}
           {results.map((r, i) => (
             <SearchResult
@@ -106,7 +128,9 @@ export function SearchDialog({ shortcut, placeholder }: Props) {
               result={r}
               active={i === active}
               onMouseEnter={() => setActive(i)}
-              onClick={() => { window.location.href = r.url; }}
+              onClick={() => {
+                window.location.href = r.url;
+              }}
             />
           ))}
         </ul>

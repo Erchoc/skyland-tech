@@ -1,11 +1,11 @@
-// scripts/build-fonts.mjs
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { resolve } from "node:path";
 import { createHash } from "node:crypto";
-import subsetFont from "subset-font";
+// scripts/build-fonts.mjs
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import fg from "fast-glob";
 import { parse as parseTOML } from "smol-toml";
-import { extractFromFiles, CJK_PUNCT } from "./fonts/scanner.mjs";
+import subsetFont from "subset-font";
+import { CJK_PUNCT, extractFromFiles } from "./fonts/scanner.mjs";
 import { toUnicodeRange } from "./fonts/unicode-range.mjs";
 
 const ROOT = process.cwd();
@@ -36,7 +36,7 @@ function hashFiles(globs) {
 async function main() {
   if (!existsSync(SOURCE)) {
     console.error(`✗ 源字体不存在: ${SOURCE}`);
-    console.error(`  从 https://github.com/lxgw/LxgwWenKai-Lite 下载 WebFont 版`);
+    console.error("  从 https://github.com/lxgw/LxgwWenKai-Lite 下载 WebFont 版");
     process.exit(1);
   }
 
@@ -46,16 +46,19 @@ async function main() {
   const scanGlobs = fonts.scan_globs ?? [];
 
   const scanned = strategy === "baseline" ? new Set() : extractFromFiles(scanGlobs, ROOT);
-  const baselineText = (fonts.baseline_charset === "cjk-3500" && existsSync(BASELINE))
-    ? readFileSync(BASELINE, "utf8")
-    : "";
+  const baselineText =
+    fonts.baseline_charset === "cjk-3500" && existsSync(BASELINE)
+      ? readFileSync(BASELINE, "utf8")
+      : "";
   const baseline = new Set(baselineText);
 
   const final = buildCharset(strategy, scanned, baseline);
   const text = [...final].join("");
 
   const source = readFileSync(SOURCE);
-  console.log(`→ subset-font: ${final.size} chars, source ${(source.length / 1024 / 1024).toFixed(2)} MB`);
+  console.log(
+    `→ subset-font: ${final.size} chars, source ${(source.length / 1024 / 1024).toFixed(2)} MB`,
+  );
   const subset = await subsetFont(source, text, { targetFormat: "woff2" });
 
   writeFileSync(TARGET, subset);
@@ -70,13 +73,15 @@ async function main() {
     strategy,
     builtAt: new Date().toISOString(),
   };
-  writeFileSync(META, JSON.stringify(meta, null, 2) + "\n");
+  writeFileSync(META, `${JSON.stringify(meta, null, 2)}\n`);
 
   if (subset.length >= source.length) {
     console.error(`✗ 产物 (${subset.length}) 比源 (${source.length}) 大，配置可能有误`);
     process.exit(1);
   }
-  console.log(`✓ 产物: ${(subset.length / 1024).toFixed(0)} KB (${(subset.length / source.length * 100).toFixed(1)}%)`);
+  console.log(
+    `✓ 产物: ${(subset.length / 1024).toFixed(0)} KB (${((subset.length / source.length) * 100).toFixed(1)}%)`,
+  );
   console.log(`✓ meta: ${META}`);
 }
 

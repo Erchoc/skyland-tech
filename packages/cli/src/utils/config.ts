@@ -1,7 +1,7 @@
-import { readFileSync, existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { parse } from "smol-toml";
 import consola from "consola";
+import { parse } from "smol-toml";
 
 export interface SiteConfig {
   site: {

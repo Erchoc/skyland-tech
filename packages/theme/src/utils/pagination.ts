@@ -6,10 +6,7 @@ export function pageUrl(page: number): string {
   return page <= 1 ? "/" : `/page/${page}`;
 }
 
-export function buildPaginationItems(
-  currentPage: number,
-  totalPages: number,
-): PaginationItem[] {
+export function buildPaginationItems(currentPage: number, totalPages: number): PaginationItem[] {
   if (totalPages <= 1) return [];
 
   const items: PaginationItem[] = [];

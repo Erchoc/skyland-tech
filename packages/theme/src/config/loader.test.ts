@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { mergeConfig } from "./loader.ts";
+import { describe, expect, it } from "vitest";
 import { DEFAULTS } from "./defaults.ts";
+import { mergeConfig } from "./loader.ts";
 
 describe("mergeConfig", () => {
   it("空输入返回 DEFAULTS 深拷贝", () => {

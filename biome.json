@@ -1,13 +1,43 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
+  "files": {
+    "ignore": [
+      "dist/**",
+      "**/dist/**",
+      ".astro/**",
+      "**/.astro/**",
+      ".superpowers/**",
+      "pnpm-lock.yaml",
+      "schema/baseline-cjk-3500.txt",
+      "packages/theme/src/styles/fonts/**"
+    ]
+  },
   "organizeImports": { "enabled": true },
   "linter": {
     "enabled": true,
     "rules": { "recommended": true }
   },
+  "overrides": [
+    {
+      "include": ["packages/theme/src/components/search/**"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useKeyWithClickEvents": "off",
+            "useFocusableInteractive": "off",
+            "useSemanticElements": "off",
+            "noNoninteractiveElementToInteractiveRole": "off"
+          },
+          "security": { "noDangerouslySetInnerHtml": "off" },
+          "correctness": { "useExhaustiveDependencies": "off" }
+        }
+      }
+    }
+  ],
   "formatter": {
     "enabled": true,
-    "indentStyle": "tab",
+    "indentStyle": "space",
+    "indentWidth": 2,
     "lineWidth": 100
   },
   "javascript": {

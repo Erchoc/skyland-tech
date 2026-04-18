@@ -1,6 +1,6 @@
-import { readFileSync, existsSync } from "node:fs";
-import { resolve } from "node:path";
 import { createHash } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import fg from "fast-glob";
 import { parse as parseTOML } from "smol-toml";
 
@@ -25,9 +25,9 @@ for (const f of files.sort((a, b) => a.path.localeCompare(b.path))) {
 const currentHash = h.digest("hex").slice(0, 16);
 
 if (currentHash !== meta.scanHash) {
-  console.error(`✗ 源文件已变化但未重建字体子集。`);
+  console.error("✗ 源文件已变化但未重建字体子集。");
   console.error(`  记录: ${meta.scanHash}  当前: ${currentHash}`);
-  console.error(`  请运行: pnpm fonts:build && git add -A && git commit`);
+  console.error("  请运行: pnpm fonts:build && git add -A && git commit");
   process.exit(1);
 }
 console.log(`✓ 字体子集一致 (${meta.chars} chars, ${Math.round(meta.bytes / 1024)} KB)`);

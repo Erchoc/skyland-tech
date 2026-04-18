@@ -1,7 +1,7 @@
 import { defineCommand } from "citty";
+import consola from "consola";
 import { execa } from "execa";
 import { loadConfig } from "../utils/config.js";
-import consola from "consola";
 
 export const devCommand = defineCommand({
   meta: { name: "dev", description: "Start dev server" },

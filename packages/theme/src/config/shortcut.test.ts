@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { parseShortcut, matchShortcut } from "./shortcut";
+import { describe, expect, it } from "vitest";
+import { matchShortcut, parseShortcut } from "./shortcut";
 
 describe("parseShortcut", () => {
   it("mod+k → metaOrCtrl + k", () => {
