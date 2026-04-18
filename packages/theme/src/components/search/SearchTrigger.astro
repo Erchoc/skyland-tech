@@ -1,0 +1,46 @@
+---
+import { SearchDialog } from "./SearchDialog.tsx";
+import { loadThemeConfig } from "../../config/loader.ts";
+
+const config = loadThemeConfig();
+const enabled = config.features.search && config.search.engine !== "none";
+
+interface Props { variant?: "light" | "dark"; }
+const { variant = "dark" } = Astro.props;
+const color = variant === "dark" ? "#9ca3af" : "#656a76";
+---
+
+{enabled && (
+  <>
+    {/* Desktop */}
+    <button
+      class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md text-[12px] font-mono transition-colors"
+      style={`background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: ${color};`}
+      onclick="document.dispatchEvent(new CustomEvent('search-dialog:open'))"
+      aria-label="打开搜索"
+    >
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+      </svg>
+      <span>⌘K</span>
+    </button>
+
+    {/* Mobile icon */}
+    <button
+      class="flex sm:hidden p-1"
+      style={`color: ${color};`}
+      onclick="document.dispatchEvent(new CustomEvent('search-dialog:open'))"
+      aria-label="打开搜索"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+      </svg>
+    </button>
+
+    <SearchDialog
+      client:idle
+      shortcut={config.search.shortcut}
+      placeholder={config.search.placeholder}
+    />
+  </>
+)}
