@@ -1,6 +1,6 @@
 {
   "framework": null,
-  "buildCommand": "echo '=== PWD ==='; pwd; echo '=== LS -LA . ==='; ls -la; echo '=== LS -LA .. ==='; ls -la ..; echo '=== LS -LA ../.. ==='; ls -la ../..; echo '=== VERCEL ENV ==='; env | grep -iE 'vercel|path0|pwd|cwd' | sort; echo '=== END DIAGNOSTIC ==='; exit 1",
+  "buildCommand": "if [ -f ./scripts/diag.sh ]; then sh ./scripts/diag.sh; elif [ -f ../scripts/diag.sh ]; then sh ../scripts/diag.sh; else echo \"__DIAG__ SCRIPT_NOT_FOUND PWD=$(pwd) FILES=[$(ls -A 2>/dev/null | tr '\\n' ' ')]\"; exit 1; fi",
   "outputDirectory": "dist",
   "installCommand": "pnpm install"
 }
