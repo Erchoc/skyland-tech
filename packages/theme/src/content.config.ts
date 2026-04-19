@@ -1,5 +1,12 @@
 import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
+import { loadThemeConfig } from "./config/loader.ts";
+
+const configuredCategories = loadThemeConfig().categories.list;
+if (configuredCategories.length === 0) {
+  throw new Error("[content.config] config.toml 的 [categories].list 必须至少有一个类目");
+}
+const categoryEnum = z.enum(configuredCategories as [string, ...string[]]);
 
 const posts = defineCollection({
   loader: glob({ pattern: "*/index.mdx", base: "./posts" }),
@@ -12,15 +19,7 @@ const posts = defineCollection({
       author: z.string(),
       cover: image().optional(),
       tags: z.array(z.string()).default([]),
-      category: z.enum([
-        "架构设计",
-        "工程实践",
-        "性能优化",
-        "基础设施",
-        "平台演进",
-        "技术选型",
-        "AI",
-      ]),
+      category: categoryEnum,
       series: z.string().optional(),
       seriesOrder: z.number().optional(),
       draft: z.boolean().default(false),

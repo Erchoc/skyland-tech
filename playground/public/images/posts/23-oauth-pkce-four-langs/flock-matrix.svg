@@ -1,19 +1,43 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" aria-label="四门语言下文件锁实现对比矩阵">
   <defs>
     <style>
-      .cell { fill: #f6f8fa; stroke: #d5d7db; stroke-width: 1; }
-      .cell-warn { fill: #fff8e8; stroke: #e0b540; stroke-width: 1; }
-      .cell-ok { fill: #eef7f0; stroke: #76b487; stroke-width: 1; }
-      .lang { font: 700 18px "DM Sans", system-ui, sans-serif; fill: #15181e; }
-      .code { font: 13px "JetBrains Mono", monospace; fill: #2264d6; }
-      .note { font: 12px "Noto Sans SC", system-ui, sans-serif; fill: #3b3d45; }
-      .badge-ok { font: 600 11px "DM Sans", system-ui, sans-serif; fill: #2d7a44; }
-      .badge-warn { font: 600 11px "DM Sans", system-ui, sans-serif; fill: #8a6a12; }
-      .footer { font: italic 12px "Noto Sans SC", system-ui, sans-serif; fill: #656a76; text-anchor: middle; }
+      :root {
+        --cell-ok-bg: #eef7f0;
+        --cell-ok-border: #76b487;
+        --cell-warn-bg: #fff8e8;
+        --cell-warn-border: #e0b540;
+        --lang: #15181e;
+        --code: #2264d6;
+        --note: #3b3d45;
+        --badge-ok: #2d7a44;
+        --badge-warn: #8a6a12;
+        --footer: #656a76;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --cell-ok-bg: #1b2a22;
+          --cell-ok-border: #3d6a4e;
+          --cell-warn-bg: #2a2316;
+          --cell-warn-border: #7a5e28;
+          --lang: #efeff1;
+          --code: #6f9cff;
+          --note: #d5d7db;
+          --badge-ok: #5fbf7f;
+          --badge-warn: #e0b540;
+          --footer: #9aa0a8;
+        }
+      }
+      .cell-warn { fill: var(--cell-warn-bg); stroke: var(--cell-warn-border); stroke-width: 1; }
+      .cell-ok { fill: var(--cell-ok-bg); stroke: var(--cell-ok-border); stroke-width: 1; }
+      .lang { font: 700 18px "DM Sans", system-ui, sans-serif; fill: var(--lang); }
+      .code { font: 13px "JetBrains Mono", monospace; fill: var(--code); }
+      .note { font: 12px "Noto Sans SC", system-ui, sans-serif; fill: var(--note); }
+      .badge-ok { font: 600 11px "DM Sans", system-ui, sans-serif; fill: var(--badge-ok); }
+      .badge-warn { font: 600 11px "DM Sans", system-ui, sans-serif; fill: var(--badge-warn); }
+      .footer { font: italic 12px "Noto Sans SC", system-ui, sans-serif; fill: var(--footer); text-anchor: middle; }
     </style>
   </defs>
 
-  <!-- Row 1 -->
   <rect class="cell-ok" x="20" y="20" width="340" height="140" rx="8"/>
   <text class="lang" x="40" y="50">Go</text>
   <text class="code" x="40" y="80">syscall.Flock(fd, LOCK_EX)</text>
@@ -26,7 +50,6 @@
   <text class="badge-ok" x="400" y="110">✓ 内核级 · 进程 crash 自动释放</text>
   <text class="note" x="400" y="134">fcntl 模块直连 POSIX 系统调用</text>
 
-  <!-- Row 2 -->
   <rect class="cell-warn" x="20" y="180" width="340" height="140" rx="8"/>
   <text class="lang" x="40" y="210">Node.js</text>
   <text class="code" x="40" y="238">fs.open(lock, 'wx') + PID</text>

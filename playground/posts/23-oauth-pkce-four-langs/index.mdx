@@ -3,15 +3,13 @@ title: "OAuth2 + PKCE：从协议到 BUC 实现"
 subtitle: "为什么 CLI 不需要 client_secret，以及 flock 在四门语言里的四种写法"
 date: 2026-04-19
 tags: ["OAuth2", "PKCE", "身份认证", "CLI", "跨语言"]
-category: "基础设施"
+category: "身份认证"
 series: "身份认证"
 seriesOrder: 1
 author: "龙野"
 draft: false
 description: "一次把 OAuth2 的四种 Grant Type、PKCE 的攻击面、BUC 对 RFC 的偏离，以及 Node / Python / Go / Rust 四门语言零依赖实现里的 stdlib 哲学差异说清楚。"
 ---
-
-import Mermaid from "@pkg/theme/components/interactive/Mermaid";
 
 > 谁该读：写过登录功能、没系统学过 OAuth2 的同学；想给 CLI 接 BUC 登录的同学；对"CLI 为什么不写 client_secret"好奇的同学。读完能答出：(1) 四种 Grant Type 为什么长成那样；(2) PKCE 堵住了哪一种攻击；(3) BUC 和 RFC 标准差在哪；(4) 同一套流程 Node/Python/Go/Rust 的 stdlib 表现力差异。
 
@@ -23,21 +21,21 @@ OAuth 的目的从来不是登录，而是**把我的某项权限委托给第三
 
 四个角色的关系：
 
-<Mermaid client:only="react" chart={`
+```mermaid
 flowchart LR
-    U["Resource Owner<br/>（你本人）"]
-    C["Client<br/>（mw-cli）"]
-    A["Authorization Server<br/>（BUC）"]
-    R["Resource Server<br/>（HSF / Sentinel）"]
+    U["Resource Owner<br/>你本人"]
+    C["Client<br/>dfcli"]
+    A["Authorization Server<br/>BUC认证中心"]
+    R["Resource Server<br/>服务/资源提供者"]
 
     U -->|1. 我要登录| C
-    C -->|2. 请发 token| A
+    C -->|2. 请颁发 token| A
     A -->|3. 浏览器确认授权| U
     A -->|4. access_token| C
     C -->|5. 带 token 请求数据| R
-`} />
+```
 
-在集团场景里：Resource Owner 是员工，Client 是 `mw-cli` 二进制，Authorization Server 是 `login.alibaba-inc.com`，Resource Server 是 HSF 管控台、Sentinel 这类后端。只有 Authorization Server 亲眼看着你输密码——其他角色从头到尾都摸不到你的凭据。
+在集团场景里：Resource Owner 是员工，Client 是一堆 `cli` 二进制工具，Authorization Server 是 `login.alibaba-inc.com`，Resource Server 是 HSF 管控台、业务后端服务等。只有 Authorization Server 亲眼看着你输密码——其他角色从头到尾都摸不到你的凭据。
 
 ---
 
@@ -61,17 +59,17 @@ CLI 的唯一正解是 **Authorization Code + PKCE**——唯一一个"有真人
 假设我们只用裸 Authorization Code，不加 PKCE：
 
 ```
-浏览器 → BUC：   给 mw-cli 一个授权码
+浏览器 → BUC：  给 dfctl 一个授权码
 BUC  → 浏览器： 302 http://127.0.0.1:PORT/callback?code=XXX
-浏览器 → CLI：   把 code=XXX 传回来
+浏览器 → CLI：  把 code=XXX 传回来
 CLI  → BUC：    POST code=XXX 换 access_token
 ```
 
-攻击点在第 3 步。`127.0.0.1:PORT/callback` 是**明文 HTTP**。如果本机上另一个恶意进程抢先绑定同一端口，或者嗅探 loopback 流量，就能截到 `code`，抢先 POST 换 token——因为服务端不知道真正的 `mw-cli` 长什么样。
+攻击点在第 3 步。`127.0.0.1:PORT/callback` 是**明文 HTTP**。如果本机上另一个恶意进程抢先绑定同一端口，或者嗅探 loopback 流量，就能截到 `code`，抢先 POST 换 token——因为服务端不知道真正的 `dfctl` 长什么样。
 
 PKCE 怎么堵这个口子：
 
-<Mermaid client:only="react" chart={`
+```mermaid
 sequenceDiagram
     participant CLI as CLI
     participant BR as 浏览器
@@ -88,7 +86,7 @@ sequenceDiagram
     CLI->>TE: 8. POST code + code_verifier
     Note over TE: 9. 校验 SHA256(verifier) == stored challenge
     TE-->>CLI: 10. access_token + refresh_token
-`} />
+```
 
 `code_verifier` 只在 CLI 进程**内存**里，从不出现在 URL、不写磁盘、不走浏览器。攻击者即使截到 `code`，没有 verifier 也换不到 token——钥匙和门在物理上分开了。
 
@@ -100,7 +98,7 @@ sequenceDiagram
 
 ![Public Client 与 Confidential Client 的信任边界对比](/images/posts/23-oauth-pkce-four-langs/trust-boundary.svg)
 
-一句话：`mw-cli` 是 public client，**没有也不能有**真正的 secret。它的"身份证"叫 `client_id=mw-cli`，是**公开信息**，不是凭据。任何人都能用这个 id 跑流程，但只能以**自己的 BUC 身份**登录成功——因为授权那一刻是 BUC 看着你在浏览器里扫码。
+一句话：`dfctl` 是 public client，**没有也不能有**真正的 secret。它的"身份证"叫 `client_id=dfctl`，是**公开信息**，不是凭据。任何人都能用这个 id 跑流程，但只能以**自己的 BUC 身份**登录成功——因为授权那一刻是 BUC 看着你在浏览器里扫码。
 
 ---
 
@@ -124,7 +122,7 @@ BUC 是"看起来像 OAuth2 的私有协议"。用社区标准库直接接大概
 | Discovery | `/.well-known/openid-configuration` | ✗ 端点硬编码 |
 | 授权码 TTL | ≤ 10 分钟 | 约 60 秒 |
 
-**能否套用社区 OAuth 库？** 能做 70%（PKCE + authorize + token 换取），但 UserInfo 那步必须自己写 fetch——社区库全部按 OIDC 标准发 `Authorization: Bearer`，BUC 直接返 401。这就是为什么 `internal/auth/buc.go` 选择**完全手写**。
+**能否套用社区 OAuth 库？** 能做 70%（PKCE + authorize + token 换取），但 UserInfo 那步必须自己写 fetch——社区库全部按 OIDC 标准发 `Authorization: Bearer`，BUC 直接返 401。这也是为什么内部不少基础类库接 BUC 会选择**完全手写**。
 
 ---
 
@@ -145,9 +143,9 @@ Step 8: 原子落盘 ~/.config/mw/auth.yaml (0600 + flock + rename)
 
 Step 8 比看起来复杂。`access_token` 是 JWT——**谁能读这个文件，就能冒充你调所有后端 API**。所以必须同时满足：
 
-1. **权限 0600**：只有文件属主能读写（`-rw-------`），防同机其他用户偷看。
-2. **flock 互斥**：防两个 `mw` 进程同时写造成文件损坏。
-3. **tmpfile + rename 原子替换**：POSIX 保证 `rename()` 原子，任何时刻读到的都是完整的旧版本或完整的新版本，永远不会读到半截。
+  1. **权限 0600**：只有文件属主能读写（`-rw-------`），防同机其他用户偷看。
+  2. **flock 互斥**：防两个 `dfctl` 进程同时写造成文件异常和损坏。
+  3. **tmpfile + rename 原子替换**：POSIX 保证 `rename()` 原子，任何时刻读到的都是完整的旧版本或完整的新版本，永远不会读到半截。
 
 ---
 
@@ -202,19 +200,19 @@ Go / Python **两行**搞定，内核负责释放；Node / Rust-std **十几行*
 
 ## 常见踩坑 Checklist
 
-1. **`invalid_grant`**：code 只能用一次；或 `redirect_uri` 在授权 URL 和换 token 时不一字一样（含 URL 转义）。
-2. **`user_info` 返回 401**：99% 是把 `access_token` 放到 `Authorization: Bearer` 里了——BUC 要求放 form body。
+1. **`invalid_grant`**：code 只能用一次；或 `redirect_uri` 在授权 URL 和换 token 时不没做到一模一样（含 URL 转义）。
+2. **`user_info` 返回 401**：99% 是把 `access_token` 放到 `Authorization: Bearer` 里了——集团 BUC 要求放 form body。
 3. **state mismatch**：同时开了两个登录流程，浏览器 A 的 state 回调到进程 B。每次登录**独立端口 + 独立 state**。
 4. **refresh_token 失效**：BUC **强制轮换**，新 token 不覆盖旧的，下次就废。
 5. **SSO Ticket 二次使用**：60 秒一次性，不要缓存。
 6. **`auth.yaml` 权限漂移**：手动 `cp` 过来可能变 0644——脚本会自己 chmod，但建议手动 `chmod 600` 一次。
-7. **孤儿 `.lock` 文件**（Node/Rust 特有）：进程被 SIGKILL 留下的；下次启动靠 PID 探活清理，探活坏了会永久卡住。
+7. **孤儿 `.lock` 文件**（Node/Rust 特有）：进程被 SIGKILL 留下的；下次启动靠应用层自己做 PID 探活清理，探活坏了会永久卡住。
 8. **借用别人的 client_id**：技术上能跑，但审计记在别人头上、scope 被别人控制、他们下线你跟着死——务必自己去 BUC 后台注册。
 
 ---
 
 ## 延伸阅读
 
-- [RFC 6749 - OAuth 2.0 Authorization Framework](https://datatracker.ietf.org/doc/html/rfc6749)
 - [RFC 7636 - PKCE](https://datatracker.ietf.org/doc/html/rfc7636)
+- [RFC 6749 - OAuth 2.0 Authorization Framework](https://datatracker.ietf.org/doc/html/rfc6749)
 - [OAuth 2.0 Security Best Current Practice](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics)（第 2.1 节专讲 public client 为什么必须 PKCE）

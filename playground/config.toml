@@ -14,7 +14,16 @@ layout = "magazine"
 github = "https://github.com/Erchoc/skyland-tech"
 
 [categories]
-list = ["架构设计", "工程实践", "性能优化", "基础设施"]
+list = [
+  "架构设计",
+  "工程实践",
+  "性能优化",
+  "基础设施",
+  "平台演进",
+  "技术选型",
+  "AI",
+  "身份认证",
+]
 
 [features]
 pwa = true

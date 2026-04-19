@@ -1,5 +1,6 @@
 ---
 import type { ImageMetadata, MarkdownHeading } from "astro";
+import { Image } from "astro:assets";
 import RelatedPosts from "../components/article/RelatedPosts.astro";
 import TableOfContents from "../components/article/TableOfContents.astro";
 import Footer from "../components/layout/Footer.astro";
@@ -137,6 +138,22 @@ const subtitleEnabled =
       </div>
     </div>
 
+    {cover && (
+      <div class="mx-auto max-w-[1150px] px-6 lg:px-8">
+        <figure class="-mt-6 sm:-mt-8 lg:-mt-10">
+          <Image
+            src={cover}
+            alt={`${title} 封面`}
+            widths={[720, 1080, 1440]}
+            sizes="(min-width: 1024px) 1024px, 100vw"
+            class="w-full object-cover"
+            style={`aspect-ratio: 16 / 7; border-radius: var(--radius-lg); background: var(--bg-secondary);`}
+            loading="eager"
+          />
+        </figure>
+      </div>
+    )}
+
     {/* Article body */}
     <div class="mx-auto max-w-[1150px] px-6 lg:px-8">
       <div class="lg:grid lg:grid-cols-[1fr_200px] lg:gap-16">
@@ -186,3 +203,22 @@ const subtitleEnabled =
   </main>
   <Footer />
 </BaseLayout>
+
+<script>
+  import mediumZoom from "medium-zoom";
+
+  // 只放大正文里的 <img>，不包括 cover / 头图、logo、icon
+  // data-zoom="off" 可以局部屏蔽
+  const selector = ".article-prose img:not([data-zoom='off'])";
+  const zoom = mediumZoom(selector, {
+    background: "rgba(15, 18, 24, 0.94)",
+    margin: 24,
+    scrollOffset: 64,
+  });
+
+  // Astro ViewTransitions 走 page:load 时重新绑定
+  document.addEventListener("astro:page-load", () => {
+    zoom.detach();
+    zoom.attach(selector);
+  });
+</script>

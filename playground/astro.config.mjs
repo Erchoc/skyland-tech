@@ -3,6 +3,7 @@ import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import { loadThemeConfig } from "@pkg/theme/config/loader";
 import { injectThemePages } from "@pkg/theme/integrations/inject-pages";
+import remarkMermaid from "@pkg/theme/integrations/remark-mermaid.mjs";
 import { isSearchEnabled } from "@pkg/theme/integrations/search";
 import tailwindcss from "@tailwindcss/vite";
 import AstroPWA from "@vite-pwa/astro";
@@ -18,8 +19,12 @@ const ONE_YEAR = 60 * 60 * 24 * 365;
 
 export default defineConfig({
   site: "https://tech.longye.site",
+  image: {
+    // 站内图以 SVG 为主，不做二进制变换；用 passthrough 服务避免强依赖 sharp
+    service: { entrypoint: "astro/assets/services/noop" },
+  },
   integrations: [
-    mdx(),
+    mdx({ remarkPlugins: [remarkMermaid] }),
     react(),
     sitemap(),
     AstroPWA({
