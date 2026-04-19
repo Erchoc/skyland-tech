@@ -1,5 +1,8 @@
 ---
 import { getCollection, render } from "astro:content";
+import TitleReveal from "../../components/ui/TitleReveal.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { loadThemeConfig } from "../../config/loader.ts";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts", ({ data }) => !data.draft);
@@ -11,96 +14,396 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+const config = loadThemeConfig();
+const titleEnabled =
+  config.features.animation && config.animation.apply_to.includes("article-title");
+const subtitleEnabled =
+  config.features.animation && config.animation.apply_to.includes("article-subtitle");
+const formattedDate = post.data.date.toLocaleDateString("zh-CN", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
 ---
 
-<!doctype html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{post.data.title} — Slides</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="mdx-source" style="display: none;">
+<BaseLayout title={`${post.data.title} — Slides`} description={post.data.description}>
+  <div id="slide-deck" class="slide-deck" data-total="0">
+    {/* Slide 0 — 封面 */}
+    <section class="slide slide-cover is-active" data-slide-index="0">
+      <div class="slide-inner slide-cover-inner">
+        {post.data.series && <p class="slide-series">{post.data.series}</p>}
+        <TitleReveal
+          text={post.data.title}
+          as="h1"
+          class="slide-cover-title"
+          duration={650}
+          stagger={50}
+          enabled={titleEnabled}
+        />
+        {post.data.subtitle && (
+          <TitleReveal
+            text={post.data.subtitle}
+            as="p"
+            class="slide-cover-subtitle"
+            delay={400}
+            duration={450}
+            stagger={30}
+            enabled={subtitleEnabled}
+          />
+        )}
+        <div class="slide-cover-meta">
+          <span>{post.data.author}</span>
+          <span class="dot">·</span>
+          <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
+        </div>
+      </div>
+    </section>
+
+    {/*
+      内容 slides 源：把 Content 渲染到 hidden container，
+      脚本按 <hr/> 把 sibling 节点分组搬到 .slide 里（不 clone，保持 DOM 身份，保证 React 岛继续 hydrate）
+    */}
+    <div id="slide-source" class="slide-source" hidden>
       <Content />
     </div>
-    <div id="slide-app"></div>
+  </div>
 
-    <script define:vars={{ title: post.data.title }}>
-      // Slide presentation engine — pure vanilla JS
-      const source = document.getElementById("mdx-source");
-      const app = document.getElementById("slide-app");
+  <div class="slide-hud">
+    <div class="slide-hud-left">
+      <button type="button" class="slide-btn" data-action="prev" aria-label="Previous">←</button>
+      <button type="button" class="slide-btn" data-action="next" aria-label="Next">→</button>
+    </div>
+    <div class="slide-hud-center">
+      <span class="slide-counter"><span id="slide-idx">1</span> / <span id="slide-total">1</span></span>
+    </div>
+    <div class="slide-hud-right">
+      <a class="slide-btn" href={`/posts/${post.id}`} aria-label="退出演讲">← 退出</a>
+      <button type="button" class="slide-btn" data-action="full" aria-label="Fullscreen">⤢ 全屏</button>
+      <span class="slide-hint">← → 翻页 · F 全屏 · Esc 退出</span>
+    </div>
+  </div>
+</BaseLayout>
 
-      if (source && app) {
-        const parts = source.innerHTML.split(/<hr\s*\/?>/);
-        const slides = [
-          `<h1 style="font-size: clamp(2rem, 5vw, 4rem); font-weight: 600; line-height: 1.17; font-family: 'DM Sans', sans-serif;">${title}</h1>`,
-          ...parts.map(s => s.trim()).filter(Boolean),
-        ];
+<style is:global>
+  /* slide 模式下禁用正文滚动 */
+  html, body { overflow: hidden; }
 
-        let current = 0;
-        const total = slides.length;
-        let touchStartX = 0;
+  .slide-deck {
+    position: fixed;
+    inset: 0;
+    background: #0d0e12;
+    color: var(--color-dark-text, #efeff1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    font-family: var(--font-body);
+  }
 
-        function render() {
-          app.innerHTML = `
-            <div style="position:fixed;inset:0;z-index:9999;background:#15181e;color:#efeff1;font-family:system-ui,-apple-system,sans-serif;display:flex;flex-direction:column;">
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:clamp(24px,5vw,80px);overflow:auto;">
-                <div style="max-width:900px;width:100%;margin:auto 0;animation:slideIn 0.3s ease;">
-                  ${slides[current]}
-                </div>
-              </div>
-              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-top:1px solid rgba(97,104,117,0.3);font-size:13px;color:#656a76;">
-                <div style="display:flex;gap:16px;">
-                  <button id="prev-btn" style="background:none;border:none;color:${current === 0 ? '#3b3d45' : '#d5d7db'};cursor:${current === 0 ? 'default' : 'pointer'};padding:4px 8px;font-size:13px;">← Prev</button>
-                  <button id="next-btn" style="background:none;border:none;color:${current === total - 1 ? '#3b3d45' : '#d5d7db'};cursor:${current === total - 1 ? 'default' : 'pointer'};padding:4px 8px;font-size:13px;">Next →</button>
-                </div>
-                <div><span style="color:#d5d7db">${current + 1}</span> / ${total}</div>
-                <div style="display:flex;gap:8px;"><span>← → Navigate</span><span>·</span><span>F Fullscreen</span></div>
-              </div>
-            </div>
-            <style>
-              @keyframes slideIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-              #slide-app h1,#slide-app h2,#slide-app h3 { font-family:'DM Sans','Noto Sans SC',sans-serif; font-weight:700; margin-bottom:0.5em; }
-              #slide-app h2 { font-size:1.75rem; line-height:1.19; }
-              #slide-app h3 { font-size:1.375rem; line-height:1.19; }
-              #slide-app p { margin-bottom:1em; line-height:1.63; font-size:1.0625rem; }
-              #slide-app ul,#slide-app ol { padding-left:1.5rem; margin-bottom:1em; }
-              #slide-app li { margin-bottom:0.5rem; line-height:1.5; }
-              #slide-app pre { background:#0d0e12; padding:1.25rem; border-radius:8px; overflow-x:auto; margin:1rem 0; font-size:0.875rem; }
-              #slide-app code { font-family:'JetBrains Mono',monospace; font-size:0.875em; }
-              #slide-app a { color:#1060ff; }
-              #slide-app table { border-collapse:collapse; width:100%; margin:1rem 0; }
-              #slide-app th,#slide-app td { border:1px solid rgba(97,104,117,0.3); padding:8px 12px; text-align:left; font-size:0.875rem; }
-              #slide-app th { background:rgba(255,255,255,0.05); font-weight:600; }
-              #slide-app img { max-width:100%; height:auto; border-radius:8px; }
-            </style>
-          `;
+  .slide {
+    display: none;
+    width: min(1180px, 94vw);
+    max-height: calc(100vh - 4.5rem);
+    overflow: auto;
+    padding: clamp(1.5rem, 4vw, 4rem) clamp(1.5rem, 5vw, 5rem);
+    scrollbar-width: thin;
+  }
+  .slide.is-active { display: block; animation: slide-in 0.28s ease; }
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-          document.getElementById("prev-btn")?.addEventListener("click", () => { if (current > 0) { current--; render(); } });
-          document.getElementById("next-btn")?.addEventListener("click", () => { if (current < total - 1) { current++; render(); } });
-        }
+  .slide-source { display: none; }
 
-        window.addEventListener("keydown", (e) => {
-          if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); if (current < total - 1) { current++; render(); } }
-          if (e.key === "ArrowLeft") { e.preventDefault(); if (current > 0) { current--; render(); } }
-          if (e.key === "f" || e.key === "F") { document.fullscreenElement ? document.exitFullscreen() : app.requestFullscreen(); }
-        });
+  /* 封面 */
+  .slide-cover-inner { max-width: 1100px; }
+  .slide-series {
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark, #6f9cff);
+    margin-bottom: 1.5rem;
+  }
+  .slide-cover-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: clamp(2.25rem, 6vw, 4.5rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: #efeff1;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .slide-cover-subtitle {
+    margin-top: 1.25rem;
+    font-size: clamp(1.125rem, 1.8vw, 1.625rem);
+    line-height: 1.55;
+    color: #c8ccd5;
+    max-width: 60ch;
+    text-wrap: pretty;
+  }
+  .slide-cover-meta {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9375rem;
+    color: #8a8f9a;
+  }
+  .slide-cover-meta .dot { color: #3b3d45; }
 
-        app.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; });
-        app.addEventListener("touchend", (e) => {
-          const delta = e.changedTouches[0].clientX - touchStartX;
-          if (Math.abs(delta) > 50) { delta < 0 ? (current < total - 1 && (current++, render())) : (current > 0 && (current--, render())); }
-        });
+  /* 内容 slide —— 继承 article-prose 的排版风格，但放大 */
+  .slide h1, .slide h2, .slide h3 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    letter-spacing: -0.005em;
+  }
+  .slide h2 {
+    font-size: clamp(1.875rem, 3.2vw, 2.75rem);
+    line-height: 1.18;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .slide h3 {
+    font-size: clamp(1.375rem, 2.2vw, 1.875rem);
+    line-height: 1.22;
+    margin-top: 1.5rem;
+  }
+  .slide p {
+    font-size: clamp(1.0625rem, 1.4vw, 1.375rem);
+    line-height: 1.72;
+    margin-bottom: 1.25rem;
+    color: #e6e8ed;
+  }
+  .slide strong { color: #fff; }
+  .slide ol, .slide ul {
+    font-size: clamp(1.0625rem, 1.4vw, 1.3125rem);
+    line-height: 1.72;
+    padding-left: 1.75rem;
+    margin: 0 0 1.5rem;
+    color: #e6e8ed;
+  }
+  .slide ol { list-style: decimal; }
+  .slide ul { list-style: disc; }
+  .slide li { margin-bottom: 0.75rem; }
+  .slide li::marker { color: var(--color-accent-dark, #6f9cff); font-weight: 600; }
 
-        render();
+  .slide blockquote {
+    border-left: 3px solid var(--color-accent-dark, #6f9cff);
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1.5rem 0;
+    color: #c8ccd5;
+    font-style: normal;
+    font-size: clamp(1rem, 1.3vw, 1.25rem);
+    line-height: 1.65;
+  }
+
+  .slide pre {
+    background: #15181e;
+    padding: 1.25rem 1.5rem;
+    border-radius: 10px;
+    overflow-x: auto;
+    margin: 1.25rem 0;
+    font-size: clamp(0.85rem, 1.1vw, 1rem);
+    line-height: 1.62;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .slide code {
+    font-family: var(--font-mono, "JetBrains Mono", monospace);
+    font-size: 0.875em;
+  }
+  .slide :not(pre) > code {
+    background: rgba(255,255,255,0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .slide table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    margin: 1.25rem 0;
+    font-size: clamp(0.875rem, 1.15vw, 1.0625rem);
+    line-height: 1.55;
+  }
+  .slide th, .slide td {
+    padding: 0.625rem 0.875rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    text-align: left;
+    vertical-align: top;
+  }
+  .slide thead { background: rgba(255,255,255,0.05); }
+  .slide th { font-weight: 600; white-space: nowrap; }
+  .slide tbody tr:last-child td { border-bottom: 0; }
+
+  .slide img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    margin: 1rem 0;
+  }
+  .slide a { color: var(--color-accent-dark, #6f9cff); text-decoration: underline; text-underline-offset: 3px; }
+
+  .slide hr { display: none; } /* hr 已用作分页，不再渲染 */
+
+  /* Mermaid 岛：居中，暗色背景 */
+  .slide astro-island { display: block; }
+  .slide astro-island > div { background: rgba(255,255,255,0.02); border-radius: 10px; padding: 0.5rem; }
+
+  /* HUD */
+  .slide-hud {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    height: 3.25rem;
+    padding: 0 1.25rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to top, rgba(0,0,0,0.5), rgba(0,0,0,0));
+    color: #c8ccd5;
+    z-index: 30;
+    font-size: 13px;
+  }
+  .slide-hud-left, .slide-hud-right { display: flex; align-items: center; gap: 0.75rem; }
+  .slide-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #e6e8ed;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font: inherit;
+    text-decoration: none;
+    transition: background .15s ease;
+  }
+  .slide-btn:hover { background: rgba(255,255,255,0.12); }
+  .slide-counter { font-variant-numeric: tabular-nums; color: #8a8f9a; }
+  .slide-hint { color: #656a76; }
+  @media (max-width: 640px) {
+    .slide-hint { display: none; }
+    .slide-hud-right { gap: 0.5rem; }
+    .slide { padding: 1.25rem 1.25rem; }
+  }
+</style>
+
+<script>
+  // 把 #slide-source 的子节点按 <hr> 分组，**移动**（不 clone）到新建的 .slide section 中，
+  // 保留每个节点的 DOM 身份 —— 这是让 <astro-island> 继续 hydrate 的关键
+  function buildSlides() {
+    const deck = document.getElementById("slide-deck");
+    const source = document.getElementById("slide-source");
+    if (!deck || !source) return { sections: [] as HTMLElement[], total: 1 };
+
+    const groups: Node[][] = [[]];
+    // 迭代 children 快照，边遍历边搬（所以先快照）
+    const children = Array.from(source.childNodes);
+    for (const node of children) {
+      if (node.nodeType === Node.ELEMENT_NODE && (node as Element).tagName === "HR") {
+        groups.push([]);
+      } else {
+        groups[groups.length - 1].push(node);
       }
-    </script>
-  </body>
-</html>
+    }
+
+    const sections: HTMLElement[] = [];
+    for (let i = 0; i < groups.length; i++) {
+      const g = groups[i].filter((n) => {
+        if (n.nodeType === Node.TEXT_NODE) return (n.textContent ?? "").trim().length > 0;
+        return true;
+      });
+      if (!g.length) continue;
+      const sec = document.createElement("section");
+      sec.className = "slide";
+      sec.dataset.slideIndex = String(i + 1); // cover 是 0
+      const inner = document.createElement("div");
+      inner.className = "slide-inner";
+      for (const n of g) inner.appendChild(n);
+      sec.appendChild(inner);
+      deck.appendChild(sec);
+      sections.push(sec);
+    }
+
+    source.remove();
+    return { sections, total: sections.length + 1 /* +1 for cover */ };
+  }
+
+  function initDeck() {
+    if ((window as any).__slideDeckInited) return;
+    (window as any).__slideDeckInited = true;
+
+    const cover = document.querySelector<HTMLElement>(".slide-cover");
+    const { sections } = buildSlides();
+    const allSlides = cover ? [cover, ...sections] : sections;
+    const total = allSlides.length;
+
+    const totalEl = document.getElementById("slide-total");
+    const idxEl = document.getElementById("slide-idx");
+    if (totalEl) totalEl.textContent = String(total);
+
+    let idx = 0;
+    function go(to: number) {
+      const next = Math.max(0, Math.min(total - 1, to));
+      if (next === idx) return;
+      allSlides[idx]?.classList.remove("is-active");
+      allSlides[next]?.classList.add("is-active");
+      allSlides[next]?.scrollTo({ top: 0 });
+      idx = next;
+      if (idxEl) idxEl.textContent = String(idx + 1);
+      // 更新 URL hash（不新增 history 条目）
+      const h = idx === 0 ? "" : `#${idx + 1}`;
+      history.replaceState(null, "", location.pathname + h);
+    }
+
+    // 初始化：如果 URL 带 hash，跳到对应 slide
+    const initial = parseInt((location.hash || "").slice(1), 10);
+    if (Number.isFinite(initial) && initial > 1 && initial <= total) {
+      allSlides[0].classList.remove("is-active");
+      allSlides[initial - 1].classList.add("is-active");
+      idx = initial - 1;
+      if (idxEl) idxEl.textContent = String(idx + 1);
+    }
+
+    // 键盘
+    window.addEventListener("keydown", (e) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); go(idx + 1); }
+      else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); go(idx - 1); }
+      else if (e.key === "Home") { e.preventDefault(); go(0); }
+      else if (e.key === "End") { e.preventDefault(); go(total - 1); }
+      else if (e.key === "f" || e.key === "F") {
+        if (document.fullscreenElement) document.exitFullscreen();
+        else document.documentElement.requestFullscreen();
+      } else if (e.key === "Escape") {
+        if (document.fullscreenElement) document.exitFullscreen();
+      }
+    });
+
+    // 按钮
+    document.querySelectorAll<HTMLElement>("[data-action]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const a = btn.dataset.action;
+        if (a === "prev") go(idx - 1);
+        else if (a === "next") go(idx + 1);
+        else if (a === "full") {
+          if (document.fullscreenElement) document.exitFullscreen();
+          else document.documentElement.requestFullscreen();
+        }
+      });
+    });
+
+    // 触摸滑动
+    let touchStart = 0;
+    document.addEventListener("touchstart", (e) => { touchStart = e.touches[0].clientX; }, { passive: true });
+    document.addEventListener("touchend", (e) => {
+      const delta = e.changedTouches[0].clientX - touchStart;
+      if (Math.abs(delta) > 50) go(idx + (delta < 0 ? 1 : -1));
+    }, { passive: true });
+  }
+
+  initDeck();
+  document.addEventListener("astro:page-load", initDeck);
+</script>

@@ -10,16 +10,12 @@ const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 ---
 
 {toc.length > 0 && (
-  <nav data-pagefind-ignore>
-    <p class="label-uppercase mb-4" style="color: var(--text-helper);">目录</p>
-    <ul style="border-left: 1px solid var(--border);">
+  <nav class="toc" data-pagefind-ignore>
+    <p class="label-uppercase toc-title">目录</p>
+    <ul class="toc-list">
       {toc.map((heading) => (
-        <li style={`padding-left: ${(heading.depth - 2) * 12 + 12}px;`}>
-          <a
-            href={`#${heading.slug}`}
-            class="block py-1 text-[13px] leading-snug transition-colors"
-            style="color: var(--text-helper);"
-          >
+        <li class={`toc-item toc-depth-${heading.depth}`}>
+          <a class="toc-link" href={`#${heading.slug}`} data-toc-link={heading.slug}>
             {heading.text}
           </a>
         </li>
@@ -27,3 +23,102 @@ const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
     </ul>
   </nav>
 )}
+
+<style is:global>
+  .toc {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--text-helper);
+  }
+  .toc-title {
+    margin-bottom: 0.75rem;
+    color: var(--text-helper);
+  }
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-left: 1px solid var(--border);
+  }
+  .toc-item {
+    margin: 0;
+    padding: 0;
+  }
+  .toc-link {
+    display: block;
+    padding: 5px 0 5px 14px;
+    margin-left: -1px;
+    border-left: 2px solid transparent;
+    color: var(--text-helper);
+    text-decoration: none;
+    transition: color .15s ease, border-color .15s ease;
+    /* 长标题优雅换行，不吃字 */
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+  .toc-depth-3 .toc-link {
+    padding-left: 26px;
+    font-size: 12.5px;
+    color: color-mix(in oklab, var(--text-helper) 85%, transparent);
+  }
+  .toc-link:hover {
+    color: var(--text);
+  }
+  .toc-link.is-active {
+    color: var(--link);
+    border-left-color: var(--link);
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  function initTocScrollSpy() {
+    const links = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>(".toc-link[data-toc-link]")
+    );
+    if (!links.length) return;
+
+    const bySlug = new Map<string, HTMLAnchorElement>();
+    for (const l of links) {
+      const slug = l.dataset.tocLink;
+      if (slug) bySlug.set(slug, l);
+    }
+
+    const headings = Array.from(bySlug.keys())
+      .map((s) => document.getElementById(s))
+      .filter((el): el is HTMLElement => !!el);
+
+    let current: HTMLAnchorElement | null = null;
+    const setActive = (slug: string | null) => {
+      const next = slug ? bySlug.get(slug) ?? null : null;
+      if (next === current) return;
+      current?.classList.remove("is-active");
+      next?.classList.add("is-active");
+      current = next;
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        // 取最靠上、已进入视口的那个 heading 作为 active
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (visible) {
+          setActive(visible.target.id);
+        } else {
+          // 全部不可见时，挑最接近视口上方的
+          const above = headings
+            .filter((h) => h.getBoundingClientRect().top < 80)
+            .pop();
+          if (above) setActive(above.id);
+        }
+      },
+      // 视口顶部 80px 以下、底部 60% 以上算 active，避免一滚就切换
+      { rootMargin: "-80px 0px -60% 0px", threshold: [0, 1] }
+    );
+    for (const h of headings) io.observe(h);
+  }
+  initTocScrollSpy();
+  document.addEventListener("astro:page-load", initTocScrollSpy);
+</script>

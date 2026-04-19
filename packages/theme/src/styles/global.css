@@ -241,6 +241,61 @@
     border-top: 1px solid var(--border);
     margin: 2.5rem 0;
   }
+
+  /* Tables
+   * MDX 默认把 | ... | 渲染成裸 <table>，没有 wrapper
+   * 桌面：正常 table 展示，长表格通过 overflow-x 横滑
+   * 移动：保留 table 形态，字号压缩，允许横滑，不再被挤成多行不可读
+   */
+  .article-prose table {
+    /* display: block + overflow-x 让 <table> 自带横向滚动，而不依赖外层 wrapper */
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-collapse: collapse;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    margin: 1.75rem 0;
+  }
+  .article-prose thead {
+    background: var(--bg-secondary);
+  }
+  .article-prose th,
+  .article-prose td {
+    padding: 0.625rem 0.875rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+  }
+  .article-prose th {
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--text);
+  }
+  .article-prose tbody tr:last-child td { border-bottom: 0; }
+  .article-prose tbody tr:nth-child(2n) td {
+    background: color-mix(in oklab, var(--bg-secondary) 50%, transparent);
+  }
+  .article-prose td code,
+  .article-prose th code {
+    white-space: nowrap;
+  }
+  /* 居中列（md table 的 |:-:| 语法），纯 CSS 无法识别，MDX 会给 <th/td style="text-align:center">，保留即可 */
+
+  @media (max-width: 640px) {
+    .article-prose table {
+      font-size: 0.875rem;
+      margin: 1.25rem 0;
+    }
+    .article-prose th,
+    .article-prose td {
+      padding: 0.5rem 0.625rem;
+    }
+  }
 }
 
 /* Uppercase label — wayfinding pattern */

@@ -76,8 +76,8 @@ const subtitleEnabled =
           <TitleReveal
             text={title}
             as="h1"
-            class="mt-3 max-w-3xl"
-            style={`font-family: var(--font-heading); font-feature-settings: "kern" 1; font-weight: 600; font-size: clamp(1.875rem, 4vw + 0.5rem, 3.25rem); line-height: 1.17; color: var(--color-dark-text);`}
+            class="mt-3"
+            style={`font-family: var(--font-heading); font-feature-settings: "kern" 1; font-weight: 600; font-size: clamp(1.875rem, 4vw + 0.5rem, 3.25rem); line-height: 1.17; color: var(--color-dark-text); text-wrap: balance;`}
             enabled={titleEnabled}
           />
         </div>
@@ -89,8 +89,8 @@ const subtitleEnabled =
             delay={300}
             stagger={35}
             duration={400}
-            class="mt-4 max-w-2xl text-[1.25rem] leading-relaxed"
-            style="color: var(--color-dark-text-secondary);"
+            class="mt-4 text-[1.25rem] leading-relaxed"
+            style="color: var(--color-dark-text-secondary); max-width: 60ch; text-wrap: pretty;"
             enabled={subtitleEnabled}
           />
         )}
@@ -156,7 +156,7 @@ const subtitleEnabled =
 
     {/* Article body */}
     <div class="mx-auto max-w-[1150px] px-6 lg:px-8">
-      <div class="lg:grid lg:grid-cols-[1fr_200px] lg:gap-16">
+      <div class="lg:grid lg:grid-cols-[1fr_240px] lg:gap-12 xl:gap-16">
         {/* Main content */}
         <article class="mx-auto w-full max-w-[65ch] py-12 lg:py-16" data-pagefind-body>
           <div class="article-prose">
