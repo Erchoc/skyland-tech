@@ -24,7 +24,26 @@ const formattedDate = post.data.date.toLocaleDateString("zh-CN", {
   month: "long",
   day: "numeric",
 });
+
+/**
+ * 按 Unicode 字符长度（中英混排按"字符"计，中文/英文等长）给封面标题分档。
+ * 阈值经验值：10 / 18 / 28；超长标题自动降档，避免文字顶破画面。
+ */
+const charLen = (s: string) => [...s].length;
+const titleLen = charLen(post.data.title);
+const subtitleLen = charLen(post.data.subtitle ?? "");
+const titleScale = titleLen <= 10 ? "scale-lg" : titleLen <= 18 ? "scale-md" : titleLen <= 28 ? "scale-sm" : "scale-xs";
+const subtitleScale = subtitleLen <= 20 ? "scale-md" : subtitleLen <= 40 ? "scale-sm" : "scale-xs";
 ---
+
+<Fragment>
+  {/* slides 不提供主题切换入口（无 Header/ThemeToggle），背景固定暗色；
+      强制 html.dark 能让 Mermaid 的 isDark 判断稳定走 dark palette，
+      不再被系统偏好或 localStorage 的 light 设置影响 */}
+  <script is:inline>
+    document.documentElement.classList.add("dark");
+  </script>
+</Fragment>
 
 <BaseLayout title={`${post.data.title} — Slides`} description={post.data.description}>
   <div id="slide-deck" class="slide-deck" data-total="0">
@@ -35,7 +54,7 @@ const formattedDate = post.data.date.toLocaleDateString("zh-CN", {
         <TitleReveal
           text={post.data.title}
           as="h1"
-          class="slide-cover-title"
+          class={`slide-cover-title ${titleScale}`}
           duration={650}
           stagger={50}
           enabled={titleEnabled}
@@ -44,7 +63,7 @@ const formattedDate = post.data.date.toLocaleDateString("zh-CN", {
           <TitleReveal
             text={post.data.subtitle}
             as="p"
-            class="slide-cover-subtitle"
+            class={`slide-cover-subtitle ${subtitleScale}`}
             delay={400}
             duration={450}
             stagger={30}
@@ -146,8 +165,6 @@ const formattedDate = post.data.date.toLocaleDateString("zh-CN", {
   .slide-cover-title {
     font-family: var(--font-heading);
     font-weight: 600;
-    /* 收紧上限：原 4.5rem 在 1440px 下会把 "BUC" 这样的单词硬拆 */
-    font-size: clamp(2rem, 4.8vw, 3.5rem);
     line-height: 1.14;
     letter-spacing: -0.005em;
     color: #efeff1;
@@ -158,10 +175,15 @@ const formattedDate = post.data.date.toLocaleDateString("zh-CN", {
     overflow-wrap: break-word;
     hyphens: manual;
   }
+  /* 按字符长度分档：短标题顶到最大字号，长标题自动降档，避免单词硬拆或顶破画面 */
+  .slide-cover-title.scale-lg { font-size: clamp(2.75rem, 7vw, 5.25rem); }
+  .slide-cover-title.scale-md { font-size: clamp(2.25rem, 5.5vw, 4rem); }
+  .slide-cover-title.scale-sm { font-size: clamp(1.875rem, 4.4vw, 3.125rem); line-height: 1.18; }
+  .slide-cover-title.scale-xs { font-size: clamp(1.625rem, 3.6vw, 2.5rem); line-height: 1.22; letter-spacing: 0; }
+
   .slide-cover-subtitle {
     display: block;
     margin-top: 1.25rem;
-    font-size: clamp(1rem, 1.6vw, 1.375rem);
     line-height: 1.6;
     color: #c8ccd5;
     max-width: 60ch;
@@ -169,6 +191,9 @@ const formattedDate = post.data.date.toLocaleDateString("zh-CN", {
     word-break: keep-all;
     overflow-wrap: break-word;
   }
+  .slide-cover-subtitle.scale-md { font-size: clamp(1.125rem, 1.8vw, 1.5rem); }
+  .slide-cover-subtitle.scale-sm { font-size: clamp(1rem, 1.5vw, 1.25rem); }
+  .slide-cover-subtitle.scale-xs { font-size: clamp(0.9375rem, 1.3vw, 1.125rem); max-width: 72ch; }
   .slide-cover-meta {
     margin-top: 2rem;
     display: flex;

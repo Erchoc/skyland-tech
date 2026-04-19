@@ -22,12 +22,41 @@ export default function Mermaid({ chart }: Props) {
           theme: isDark ? "dark" : "default",
           themeVariables: isDark
             ? {
-                primaryColor: "#1c1f26",
-                primaryTextColor: "#efeff1",
-                primaryBorderColor: "#656a76",
-                lineColor: "#656a76",
-                secondaryColor: "#15181e",
-                tertiaryColor: "#0d0e12",
+                // base —— 用作节点底色 / 文字 / 默认连线
+                primaryColor: "#2a2e38",
+                primaryTextColor: "#f4f5f7",
+                primaryBorderColor: "#8790a2",
+                lineColor: "#a8b0c0",
+                secondaryColor: "#1c1f26",
+                tertiaryColor: "#15181e",
+
+                // flowchart / graph
+                mainBkg: "#2a2e38",
+                nodeBorder: "#8790a2",
+                nodeTextColor: "#f4f5f7",
+                clusterBkg: "#1c1f26",
+                clusterBorder: "#3b3d45",
+                defaultLinkColor: "#a8b0c0",
+                titleColor: "#f4f5f7",
+                edgeLabelBackground: "#15181e",
+
+                // sequenceDiagram —— 图 15 里偏灰的 actor / signal / note 都靠这组变量
+                actorBkg: "#2a2e38",
+                actorBorder: "#8790a2",
+                actorTextColor: "#f4f5f7",
+                actorLineColor: "#6f9cff",
+                signalColor: "#c8ccd5",
+                signalTextColor: "#f4f5f7",
+                labelBoxBkgColor: "#2a2e38",
+                labelBoxBorderColor: "#8790a2",
+                labelTextColor: "#f4f5f7",
+                loopTextColor: "#c8ccd5",
+                activationBkgColor: "#3b3d45",
+                activationBorderColor: "#8790a2",
+                // Note：原 mermaid dark 默认是扎眼的明黄；改成暗金底 + 柔和黄字，和 slides 背景协调
+                noteBkgColor: "#2a2413",
+                noteBorderColor: "#8a6a12",
+                noteTextColor: "#f0e9c2",
               }
             : {
                 primaryColor: "#f1f2f3",
