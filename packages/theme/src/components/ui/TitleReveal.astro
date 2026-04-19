@@ -53,10 +53,11 @@ const forceOff = config.animation.reduced_motion === "force-off";
 )}
 
 <style is:global>
-  .title-reveal { display: inline; }
+  /* .title-reveal 不设 display，完全继承 Tag（h1/h2/p/span）自身的 block / inline 行为；
+   * 这样 hero、slide cover 里的 h1+p 都能正常分行 */
   .title-reveal .tr-ch,
   .title-reveal .tr-wrap { display: inline-block; }
-  /* 保留字符之间的空格：inline-block 默认会把纯空格节点折叠，white-space: pre 让单字 span 自己把空格渲染出来 */
+  /* 保留字符之间的空格：inline-block 相邻会折叠空白节点，white-space: pre 让单字 span 自己把空格渲染出来 */
   .title-reveal .tr-ch { white-space: pre; }
 
   /* variant: slide-up (default) */

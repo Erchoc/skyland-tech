@@ -93,25 +93,43 @@ const formattedDate = post.data.date.toLocaleDateString("zh-CN", {
     inset: 0;
     background: #0d0e12;
     color: var(--color-dark-text, #efeff1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     z-index: 20;
     font-family: var(--font-body);
   }
 
+  /*
+   * slide 叠放（position: absolute + visibility/opacity 切换）而不是 display: none。
+   * 原因：Mermaid 的 mermaid.render() 依赖 DOM 实际布局来测文本宽度，
+   *       如果容器 display:none，测量为 0，节点 rect 被画得不够宽，文字右侧被截断。
+   *       改为叠放后所有 slide 保持正常 layout，Mermaid 尺寸正确，只是非 active 的看不见。
+   */
   .slide {
-    display: none;
-    width: min(1180px, 94vw);
-    max-height: calc(100vh - 4.5rem);
-    overflow: auto;
-    padding: clamp(1.5rem, 4vw, 4rem) clamp(1.5rem, 5vw, 5rem);
+    position: absolute;
+    inset: 0;
+    /* flex 让内容区天然居中；内容短时垂直居中，内容长时自动滚动不撑破 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.25rem, 3vw, 3rem) clamp(1.25rem, 4vw, 4rem) calc(3.5rem + clamp(1rem, 2vw, 2rem));
+    overflow-y: auto;
     scrollbar-width: thin;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.28s ease;
+    pointer-events: none;
   }
-  .slide.is-active { display: block; animation: slide-in 0.28s ease; }
-  @keyframes slide-in {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
+  .slide.is-active {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+  }
+
+  .slide-inner {
+    width: min(1180px, 94vw);
+    max-width: 100%;
+    /* flex 子项默认 min-height: auto，超长时需要显式让它可以收缩并参与滚动 */
+    margin: auto 0;
   }
 
   .slide-source { display: none; }
@@ -123,25 +141,33 @@ const formattedDate = post.data.date.toLocaleDateString("zh-CN", {
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-accent-dark, #6f9cff);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
   }
   .slide-cover-title {
     font-family: var(--font-heading);
     font-weight: 600;
-    font-size: clamp(2.25rem, 6vw, 4.5rem);
-    line-height: 1.12;
-    letter-spacing: -0.01em;
+    /* 收紧上限：原 4.5rem 在 1440px 下会把 "BUC" 这样的单词硬拆 */
+    font-size: clamp(2rem, 4.8vw, 3.5rem);
+    line-height: 1.14;
+    letter-spacing: -0.005em;
     color: #efeff1;
     margin: 0;
     text-wrap: balance;
+    /* 保护英文单词不被切断 */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    hyphens: manual;
   }
   .slide-cover-subtitle {
+    display: block;
     margin-top: 1.25rem;
-    font-size: clamp(1.125rem, 1.8vw, 1.625rem);
-    line-height: 1.55;
+    font-size: clamp(1rem, 1.6vw, 1.375rem);
+    line-height: 1.6;
     color: #c8ccd5;
     max-width: 60ch;
     text-wrap: pretty;
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
   .slide-cover-meta {
     margin-top: 2rem;
