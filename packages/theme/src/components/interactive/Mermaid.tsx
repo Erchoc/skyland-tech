@@ -71,18 +71,33 @@ export default function Mermaid({ chart }: Props) {
         });
 
         const id = `mermaid-${Math.random().toString(36).slice(2, 9)}`;
-        const { svg: rendered } = await mermaid.render(id, chart);
 
         /**
-         * 字体一致性修复：
-         * mermaid 在测量节点文字宽度时使用 `fontFamily` 配置（system-ui），
-         * 但输出的 SVG <text> 和 <foreignObject> 内 HTML 会继承父容器字体。
-         * 如果父容器（.article-prose / .slide）的 body 字体是 LXGW 文楷，
-         * 实际渲染宽度会 > 测量宽度，节点 rect 装不下文字 → 文字被截断。
+         * 字体一致性：mermaid.render 默认把 measurement DOM 挂到 body，
+         * 继承 body 的 font-family（站点是 LXGW 文楷）。
+         * 最终 SVG 却渲染在我们的 .mermaid-render container（system-ui），
+         * 两套字体宽度不一致，节点 rect 按测量字体画，文字按渲染字体放 → 被截。
          *
-         * 解决：把 SVG 根 <svg> 上加 inline font-family=system-ui，
-         * 让 SVG 内部所有 text / foreignObject 继承相同字体，和 mermaid 测量一致。
+         * 正解：临时挂一个 host 在 container 内部，把 host 作为 mermaid.render
+         * 的 svgContainingElement —— measurement 和最终渲染走同一条 CSS cascade，
+         * 字体、line-height 完全一致。
          */
+        const container = containerRef.current;
+        if (!container) return;
+        const host = document.createElement("div");
+        host.style.cssText =
+          "position: absolute; visibility: hidden; pointer-events: none; top: 0; left: 0; width: 100%;";
+        container.appendChild(host);
+
+        let rendered: string;
+        try {
+          const result = await mermaid.render(id, chart, host);
+          rendered = result.svg;
+        } finally {
+          host.remove();
+        }
+
+        // SVG 根再注入一次 font-family 兜底，防止 SVG 被移植到别处时继承链断掉
         const fontFamily =
           "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
         const patched = rendered.replace(

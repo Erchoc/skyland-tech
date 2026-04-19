@@ -271,16 +271,20 @@ const subtitleScale = subtitleLen <= 20 ? "scale-md" : subtitleLen <= 40 ? "scal
   }
 
   .slide table {
-    display: block;
+    /* 桌面：cells 自动撑满主栏，右侧不留空白 */
+    display: table;
     width: 100%;
     max-width: 100%;
-    overflow-x: auto;
     border-collapse: collapse;
     border: 1px solid rgba(255,255,255,0.12);
     border-radius: 8px;
     margin: 1.25rem 0;
     font-size: clamp(0.875rem, 1.15vw, 1.0625rem);
     line-height: 1.55;
+    table-layout: auto;
+  }
+  @media (max-width: 640px) {
+    .slide table { display: block; overflow-x: auto; }
   }
   .slide th, .slide td {
     padding: 0.625rem 0.875rem;
