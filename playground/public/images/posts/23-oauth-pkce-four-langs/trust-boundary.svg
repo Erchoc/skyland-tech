@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" aria-label="Public Client 与 Confidential Client 的信任边界对比">
+  <defs>
+    <style>
+      .panel { fill: #f6f8fa; stroke: #d5d7db; stroke-width: 1; }
+      .panel-dark { fill: #1c1f26; stroke: #3b3d45; stroke-width: 1; }
+      .panel-title { font: 600 14px "DM Sans", system-ui, sans-serif; fill: #15181e; }
+      .panel-title-dark { font: 600 14px "DM Sans", system-ui, sans-serif; fill: #efeff1; }
+      .row { font: 13px "Noto Sans SC", system-ui, sans-serif; fill: #3b3d45; }
+      .row-dark { font: 13px "Noto Sans SC", system-ui, sans-serif; fill: #d5d7db; }
+      .cross { fill: #d93036; font: 700 13px monospace; }
+      .check { fill: #2d7a44; font: 700 13px monospace; }
+      .trust { stroke: #2264d6; stroke-width: 1.5; stroke-dasharray: 4 4; fill: none; }
+      .divider { stroke: #d5d7db; stroke-width: 1; }
+      .hint { font: italic 12px "Noto Sans SC", system-ui, sans-serif; fill: #656a76; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="720" height="300" fill="transparent"/>
+
+  <!-- LEFT: Public Client -->
+  <rect class="panel" x="20" y="20" width="320" height="260" rx="10"/>
+  <text class="panel-title" x="36" y="48">Public Client (CLI / SPA / 手机 App)</text>
+  <rect class="trust" x="36" y="64" width="288" height="48" rx="6"/>
+  <text class="row" x="50" y="84">💻 代码分发到用户设备</text>
+  <text class="row" x="50" y="102">↳ 二进制 / JS bundle 可被反编译</text>
+
+  <text class="cross" x="50" y="140">✗</text>
+  <text class="row" x="72" y="140">client_secret · 无法保密</text>
+
+  <text class="check" x="50" y="164">✓</text>
+  <text class="row" x="72" y="164">PKCE · code_verifier 只在内存</text>
+
+  <text class="check" x="50" y="188">✓</text>
+  <text class="row" x="72" y="188">127.0.0.1 回调 + 随机端口</text>
+
+  <text class="check" x="50" y="212">✓</text>
+  <text class="row" x="72" y="212">redirect_uri 白名单校验</text>
+
+  <text class="hint" x="180" y="258">安全性建立在 server-side 校验 + 动态 nonce 上</text>
+
+  <!-- RIGHT: Confidential Client -->
+  <rect class="panel-dark" x="380" y="20" width="320" height="260" rx="10"/>
+  <text class="panel-title-dark" x="396" y="48">Confidential Client (后端服务)</text>
+  <rect class="trust" x="396" y="64" width="288" height="48" rx="6"/>
+  <text class="row-dark" x="410" y="84">🏢 代码跑在你掌控的机房</text>
+  <text class="row-dark" x="410" y="102">↳ 文件系统隔离 + VPC + 密钥托管</text>
+
+  <text class="check" x="410" y="140">✓</text>
+  <text class="row-dark" x="432" y="140">client_secret · 服务器保管</text>
+
+  <text class="check" x="410" y="164">✓</text>
+  <text class="row-dark" x="432" y="164">mTLS / Private Key JWT (可选)</text>
+
+  <text class="check" x="410" y="188">✓</text>
+  <text class="row-dark" x="432" y="188">全部 Grant Type 都能用</text>
+
+  <text class="check" x="410" y="212">✓</text>
+  <text class="row-dark" x="432" y="212">Client Credentials (M2M)</text>
+
+  <text class="hint" x="540" y="258" style="fill:#9aa0a8;">安全性建立在 client_secret 的保密能力上</text>
+</svg>

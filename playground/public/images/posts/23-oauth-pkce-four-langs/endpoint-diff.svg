@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" aria-label="标准 OAuth 与 BUC 的端点与调用方式差异">
+  <defs>
+    <style>
+      .panel { fill: #f6f8fa; stroke: #d5d7db; stroke-width: 1; }
+      .panel-red { fill: #fdf0f0; stroke: #d93036; stroke-width: 1; }
+      .title { font: 700 14px "DM Sans", system-ui, sans-serif; fill: #15181e; }
+      .url { font: 13px "JetBrains Mono", monospace; fill: #15181e; }
+      .method { font: 700 12px "JetBrains Mono", monospace; }
+      .get { fill: #2d7a44; }
+      .post { fill: #2264d6; }
+      .warn { fill: #d93036; }
+      .note { font: 12px "Noto Sans SC", system-ui, sans-serif; fill: #3b3d45; }
+      .divider { stroke: #d5d7db; stroke-dasharray: 3 3; }
+      .badge { font: 600 11px "Noto Sans SC", system-ui, sans-serif; fill: #8a6a12; }
+      .verdict { font: italic 12px "Noto Sans SC", system-ui, sans-serif; fill: #656a76; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- LEFT: 标准 -->
+  <rect class="panel" x="20" y="20" width="320" height="280" rx="10"/>
+  <text class="title" x="36" y="46">标准 OAuth 2.0 / OIDC</text>
+  <line class="divider" x1="36" x2="324" y1="60" y2="60"/>
+
+  <text class="method get" x="36" y="90">GET</text>
+  <text class="url" x="76" y="90">/authorize?...</text>
+
+  <text class="method post" x="36" y="118">POST</text>
+  <text class="url" x="82" y="118">/token</text>
+
+  <text class="method get" x="36" y="146">GET</text>
+  <text class="url" x="76" y="146">/userinfo</text>
+  <text class="note" x="76" y="164">Authorization: Bearer &lt;tok&gt;</text>
+
+  <text class="method get" x="36" y="200">GET</text>
+  <text class="url" x="76" y="200">/.well-known/openid-configuration</text>
+  <text class="note" x="36" y="220">Discovery 文档 · client 库自动拉</text>
+
+  <text class="verdict" x="180" y="280">端点可发现 · 调用方式统一</text>
+
+  <!-- RIGHT: BUC -->
+  <rect class="panel-red" x="380" y="20" width="320" height="280" rx="10"/>
+  <text class="title" x="396" y="46">BUC (login.alibaba-inc.com)</text>
+  <line class="divider" x1="396" x2="684" y1="60" y2="60"/>
+
+  <text class="method get" x="396" y="90">GET</text>
+  <text class="url" x="436" y="90">/oauth2/auth.htm?...</text>
+
+  <text class="method post" x="396" y="118">POST</text>
+  <text class="url" x="442" y="118">/rpc/oauth2/access_token.json</text>
+
+  <text class="method warn" x="396" y="146">POST</text>
+  <text class="url" x="442" y="146">/rpc/oauth2/user_info.json</text>
+  <text class="badge" x="442" y="164">⚠ access_token 放 form body，不是 header</text>
+
+  <text class="method post" x="396" y="200">POST</text>
+  <text class="url" x="442" y="200">/rpc/openapi/generate_ticket.json</text>
+  <text class="note" x="396" y="220">BUC 独家 · 60s 一次性 SSO ticket</text>
+
+  <text class="verdict" x="540" y="280">端点硬编码 · userinfo 偏离 RFC</text>
+</svg>
