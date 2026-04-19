@@ -73,8 +73,25 @@ export default function Mermaid({ chart }: Props) {
         const id = `mermaid-${Math.random().toString(36).slice(2, 9)}`;
         const { svg: rendered } = await mermaid.render(id, chart);
 
+        /**
+         * 字体一致性修复：
+         * mermaid 在测量节点文字宽度时使用 `fontFamily` 配置（system-ui），
+         * 但输出的 SVG <text> 和 <foreignObject> 内 HTML 会继承父容器字体。
+         * 如果父容器（.article-prose / .slide）的 body 字体是 LXGW 文楷，
+         * 实际渲染宽度会 > 测量宽度，节点 rect 装不下文字 → 文字被截断。
+         *
+         * 解决：把 SVG 根 <svg> 上加 inline font-family=system-ui，
+         * 让 SVG 内部所有 text / foreignObject 继承相同字体，和 mermaid 测量一致。
+         */
+        const fontFamily =
+          "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+        const patched = rendered.replace(
+          /<svg\b([^>]*?)>/i,
+          (_m, attrs) => `<svg${attrs} style="font-family:${fontFamily};">`,
+        );
+
         if (!cancelled) {
-          setSvg(rendered);
+          setSvg(patched);
           setError("");
         }
       } catch (err) {
@@ -112,11 +129,15 @@ export default function Mermaid({ chart }: Props) {
   return (
     <div
       ref={containerRef}
+      className="mermaid-render"
       style={{
         margin: "1.5rem 0",
         display: "flex",
         justifyContent: "center",
         overflow: "auto",
+        // 容器级字体：foreignObject 里 HTML 元素会从最近的 CSS 祖先继承 font-family
+        fontFamily:
+          "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
       }}
       // biome-ignore lint/security/noDangerouslySetInnerHtml: mermaid 渲染器输出的 SVG 字符串，必须通过 innerHTML 挂载；SVG 来源是 mermaid 编译 trusted markdown，无 XSS 风险
       dangerouslySetInnerHTML={{ __html: svg }}

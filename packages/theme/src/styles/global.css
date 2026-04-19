@@ -298,6 +298,21 @@
   }
 }
 
+/*
+ * Mermaid 字体兜底：
+ * Mermaid 组件已经在 SVG 根上注入 inline font-family，但父容器若有 `*`
+ * selector 重置字体（某些 prose 主题会这么干）仍可能影响 foreignObject 里的文字。
+ * 这里用全局规则再兜一层，保证测量字体（system-ui）与渲染字体一致。
+ */
+.mermaid-render,
+.mermaid-render svg,
+.mermaid-render svg text,
+.mermaid-render svg tspan,
+.mermaid-render foreignObject,
+.mermaid-render foreignObject * {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+}
+
 /* Uppercase label — wayfinding pattern */
 @layer utilities {
   .label-uppercase {

@@ -36,16 +36,15 @@ const titleScale = titleLen <= 10 ? "scale-lg" : titleLen <= 18 ? "scale-md" : t
 const subtitleScale = subtitleLen <= 20 ? "scale-md" : subtitleLen <= 40 ? "scale-sm" : "scale-xs";
 ---
 
-<Fragment>
-  {/* slides 不提供主题切换入口（无 Header/ThemeToggle），背景固定暗色；
+<BaseLayout title={`${post.data.title} — Slides`} description={post.data.description}>
+  {/* slides 不提供主题切换入口（无 Header/ThemeToggle），背景固定暗色。
       强制 html.dark 能让 Mermaid 的 isDark 判断稳定走 dark palette，
-      不再被系统偏好或 localStorage 的 light 设置影响 */}
+      不被系统偏好或 localStorage 的 light 设置影响。
+      放在 BaseLayout children 的第一位 —— 会落在 <body> 内开头，
+      早于 Mermaid React island 的 hydration，document.documentElement 也已经存在。 */}
   <script is:inline>
     document.documentElement.classList.add("dark");
   </script>
-</Fragment>
-
-<BaseLayout title={`${post.data.title} — Slides`} description={post.data.description}>
   <div id="slide-deck" class="slide-deck" data-total="0">
     {/* Slide 0 — 封面 */}
     <section class="slide slide-cover is-active" data-slide-index="0">
